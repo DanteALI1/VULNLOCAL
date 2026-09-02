@@ -28,15 +28,19 @@
       </div>
       <div class="tip-field">
         <div class="tip-label">Организация</div>
-        <div>{{ state.payload.org|default:status_info.org|default:"—" }}</div>
+        <div>{{ state.payload.org|default:"—" }}</div>
       </div>
       <div class="tip-field">
         <div class="tip-label">Срок</div>
-        <div>{{ state.expires_at|date:"d.m.Y H:i"|default:status_info.expires|default:"—" }}</div>
+        <div>
+          {% if state.expires_at %}{{ state.expires_at|date:"d.m.Y H:i" }}
+          {% elif status_info.expires_at %}{{ status_info.expires_at }}
+          {% else %}—{% endif %}
+        </div>
       </div>
       <div class="tip-field">
         <div class="tip-label">Fingerprint узла</div>
-        <div class="tip-mono">{{ fingerprint|default:state.fingerprint|default:"—" }}</div>
+        <div class="tip-mono">{% firstof fingerprint state.fingerprint "—" %}</div>
       </div>
       <div class="tip-field">
         <div class="tip-label">License Server</div>

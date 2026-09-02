@@ -1,0 +1,4 @@
+-- NovaTIP DB bootstrap (runs once on empty volume)
+GRANT ALL ON SCHEMA public TO novatip;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO novatip;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO novatip;
