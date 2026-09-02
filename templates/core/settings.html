@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Настройки · NovaTIP{% endblock %}
+{% block crumb %}Настройки{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Настройки</h1>
+    <p>Организация, оформление, источники синхронизации, уведомления и сведения о БД</p>
+  </div>
+</div>
+
+<div class="tip-tabs" data-tip-tabs="settings" data-tip-tab-active="{{ tab|default:'org' }}" role="tablist">
+  <button type="button" class="tip-tab {% if tab == 'org' or not tab %}is-active{% endif %}" data-tip-tab="org" role="tab">Организация</button>
+  <button type="button" class="tip-tab {% if tab == 'brand' %}is-active{% endif %}" data-tip-tab="brand" role="tab">Оформление</button>
+  <button type="button" class="tip-tab {% if tab == 'sync' %}is-active{% endif %}" data-tip-tab="sync" role="tab">Источники / Sync</button>
+  <button type="button" class="tip-tab {% if tab == 'mail' %}is-active{% endif %}" data-tip-tab="mail" role="tab">Почта</button>
+  <button type="button" class="tip-tab {% if tab == 'telegram' %}is-active{% endif %}" data-tip-tab="telegram" role="tab">Telegram</button>
+  <button type="button" class="tip-tab {% if tab == 'db' %}is-active{% endif %}" data-tip-tab="db" role="tab">БД</button>
+</div>
+
+<form method="post" enctype="multipart/form-data" novalidate data-tip-tab-panes="settings">
+  {% csrf_token %}
+  <input type="hidden" name="tab" value="{{ tab|default:'org' }}" id="settings-tab-field">
+
+  <div class="tip-tab-pane {% if tab == 'org' or not tab %}is-active{% endif %}" data-tip-tab-pane="org">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">Организация</h2></div>
+      <div class="tip-panel__body">
+        <div class="tip-field">
+          <label class="tip-label" for="id_organization_name">Название организации</label>
+          {{ form.organization_name }}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_local_id_prefix">Префикс локальных ID</label>
+          {{ form.local_id_prefix }}
+          <div class="tip-help">Формат: {PREFIX}-YYYY-NNNN. Запрещены CVE и BDU.</div>
+        </div>
+        <button type="submit" class="tip-btn tip-btn--primary" onclick="document.getElementById('settings-tab-field').value='org'">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-tab-pane {% if tab == 'brand' %}is-active{% endif %}" data-tip-tab-pane="brand">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">Оформление (login)</h2></div>
+      <div class="tip-panel__body">
+        <div class="tip-field">
+          <label class="tip-label" for="id_login_title">Заголовок</label>
+          {{ form.login_title }}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_login_subtitle">Подзаголовок</label>
+          {{ form.login_subtitle }}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_logo">Логотип</label>
+          {{ form.logo }}
+          {% if settings_obj.logo %}
+            <div class="tip-help">Текущий: <img src="{{ settings_obj.logo.url }}" alt="" style="height:32px;vertical-align:middle"></div>
+          {% endif %}
+        </div>
+        <button type="submit" class="tip-btn tip-btn--primary" onclick="document.getElementById('settings-tab-field').value='brand'">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-tab-pane {% if tab == 'sync' %}is-active{% endif %}" data-tip-tab-pane="sync">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">Источники и синхронизация</h2></div>
+      <div class="tip-panel__body">
+        <div class="tip-field">
+          <label class="tip-label" for="id_nvd_api_key">NVD API Key</label>
+          {{ form.nvd_api_key }}
+        </div>
+        <label class="tip-check">{{ form.kev_enabled }} Синхронизировать KEV (CISA)</label>
+        <label class="tip-check">{{ form.bdu_enabled }} Синхронизировать БДУ ФСТЭК</label>
+        <div class="tip-field" style="margin-top:12px">
+          <label class="tip-label" for="id_sync_cron">Расписание (cron)</label>
+          {{ form.sync_cron }}
+        </div>
+        <div class="tip-page-actions">
+          <button type="submit" class="tip-btn tip-btn--primary" onclick="document.getElementById('settings-tab-field').value='sync'">Сохранить</button>
+          {% if sync_now_url %}
+            <a class="tip-btn" href="{{ sync_now_url }}" data-confirm="Запустить синхронизацию сейчас?">Синхронизировать сейчас</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-tab-pane {% if tab == 'mail' %}is-active{% endif %}" data-tip-tab-pane="mail">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">Почта (SMTP)</h2></div>
+      <div class="tip-panel__body">
+        <div class="tip-field-row">
+          <div class="tip-field">
+            <label class="tip-label" for="id_email_host">SMTP host</label>
+            {{ form.email_host }}
+          </div>
+          <div class="tip-field">
+            <label class="tip-label" for="id_email_port">Port</label>
+            {{ form.email_port }}
+          </div>
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_email_user">Пользователь</label>
+          {{ form.email_user }}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_email_password">Пароль</label>
+          {{ form.email_password }}
+        </div>
+        <label class="tip-check">{{ form.email_use_tls }} Использовать TLS</label>
+        <button type="submit" class="tip-btn tip-btn--primary" style="margin-top:12px" onclick="document.getElementById('settings-tab-field').value='mail'">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-tab-pane {% if tab == 'telegram' %}is-active{% endif %}" data-tip-tab-pane="telegram">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">Telegram</h2></div>
+      <div class="tip-panel__body">
+        <div class="tip-field">
+          <label class="tip-label" for="id_telegram_bot_token">Bot token</label>
+          {{ form.telegram_bot_token }}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_telegram_chat_id">Chat ID</label>
+          {{ form.telegram_chat_id }}
+        </div>
+        <button type="submit" class="tip-btn tip-btn--primary" onclick="document.getElementById('settings-tab-field').value='telegram'">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-tab-pane {% if tab == 'db' %}is-active{% endif %}" data-tip-tab-pane="db">
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h2 class="tip-panel__title">База данных (только просмотр)</h2></div>
+      <div class="tip-panel__body">
+        <p class="tip-help" style="margin-bottom:12px">Параметры подключения задаются при установке и в `.env`. Смена пароля УЗ БД — через администратора площадки с аудитом.</p>
+        <div class="tip-field-row">
+          <div class="tip-field">
+            <label class="tip-label">Host</label>
+            <input class="tip-input tip-readonly" readonly value="{{ settings_obj.db_host }}">
+          </div>
+          <div class="tip-field">
+            <label class="tip-label">Port</label>
+            <input class="tip-input tip-readonly" readonly value="{{ settings_obj.db_port }}">
+          </div>
+          <div class="tip-field">
+            <label class="tip-label">База</label>
+            <input class="tip-input tip-readonly" readonly value="{{ settings_obj.db_name }}">
+          </div>
+          <div class="tip-field">
+            <label class="tip-label">Пользователь</label>
+            <input class="tip-input tip-readonly" readonly value="{{ settings_obj.db_user }}">
+          </div>
+          <div class="tip-field">
+            <label class="tip-label">SSL mode</label>
+            <input class="tip-input tip-readonly" readonly value="{{ settings_obj.db_sslmode }}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

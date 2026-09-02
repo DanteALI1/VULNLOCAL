@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Заявка T-{{ ticket.number }} · NovaTIP{% endblock %}
+{% block crumb %}Заявки / T-{{ ticket.number }}{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Заявка T-{{ ticket.number }}</h1>
+    <p>
+      <span class="tip-badge tip-badge--muted">{{ ticket.get_status_display }}</span>
+      · Приоритет: {{ ticket.get_priority_display }}
+      {% if ticket.vulnerability %}
+        · <a class="tip-mono" href="{% url 'vulns:detail' ticket.vulnerability_id %}">{{ ticket.vulnerability.vuln_id }}</a>
+      {% endif %}
+    </p>
+  </div>
+  <div class="tip-page-actions tip-row-actions">
+    {% for action in actions %}
+      <form method="post" action="{% url 'tickets:transition' ticket.pk %}" style="display:inline">
+        {% csrf_token %}
+        <input type="hidden" name="new_status" value="{{ action.status }}">
+        {% if action.force %}<input type="hidden" name="force" value="1">{% endif %}
+        <button type="submit"
+                class="tip-btn {% if action.status == 'resolved' or action.status == 'closed' %}tip-btn--primary{% endif %} {% if action.force or action.status == 'rejected' %}tip-btn--danger{% endif %}"
+                {% if action.force %}data-confirm="Force close заявки T-{{ ticket.number }}?"{% endif %}>
+          {{ action.label }}
+        </button>
+      </form>
+    {% empty %}
+      <span class="tip-muted">Нет доступных переходов статуса</span>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="tip-grid-2">
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">Карточка</h2></div>
+    <div class="tip-panel__body">
+      <div class="tip-field">
+        <div class="tip-label">Заголовок</div>
+        <div>{{ ticket.title|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Постановщик</div>
+        <div>{{ ticket.reporter|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Исполнитель</div>
+        <div>{{ ticket.assignee|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Описание</div>
+        <div class="tip-prose">{{ ticket.description|default:"—" }}</div>
+      </div>
+      {% if ticket.resolution_notes %}
+        <div class="tip-field">
+          <div class="tip-label">Описание устранения</div>
+          <div class="tip-prose">{{ ticket.resolution_notes }}</div>
+        </div>
+      {% endif %}
+      {% if ticket.waiting_reason %}
+        <div class="tip-field">
+          <div class="tip-label">Причина ожидания</div>
+          <div class="tip-prose">{{ ticket.waiting_reason }}</div>
+        </div>
+      {% endif %}
+
+      {% if can_assign and assign_form %}
+        <div class="tip-sep"></div>
+        <form method="post" action="{% url 'tickets:assign' ticket.pk %}">
+          {% csrf_token %}
+          <div class="tip-field">
+            <label class="tip-label" for="{{ assign_form.assignee.id_for_label }}">Назначить исполнителя</label>
+            {{ assign_form.assignee }}
+          </div>
+          <button type="submit" class="tip-btn tip-btn--primary">Назначить</button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">История статусов</h2></div>
+    <div class="tip-panel__body">
+      <ul class="tip-timeline">
+        {% for h in events %}
+          <li>
+            <div class="tip-timeline__when">{{ h.created_at|date:"d.m.Y H:i" }}</div>
+            <div class="tip-timeline__what">
+              {% if h.from_status %}{{ h.from_status }} → {% endif %}{{ h.to_status }}
+              {% if h.action %} · {{ h.action }}{% endif %}
+              {% if h.message %} · {{ h.message }}{% endif %}
+            </div>
+            {% if h.actor %}<div class="tip-muted">{{ h.actor }}</div>{% endif %}
+          </li>
+        {% empty %}
+          <li><div class="tip-muted">История пуста</div></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+</div>
+
+{% if transition_form and actions %}
+<section class="tip-panel" style="max-width:640px">
+  <div class="tip-panel__head"><h2 class="tip-panel__title">Комментарий / причины перехода</h2></div>
+  <div class="tip-panel__body">
+    <form method="post" action="{% url 'tickets:transition' ticket.pk %}">
+      {% csrf_token %}
+      {% for field in transition_form %}
+        <div class="tip-field">
+          <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+      {% endfor %}
+      <div class="tip-page-actions">
+        {% for action in actions %}
+          <button type="submit" name="new_status" value="{{ action.status }}" class="tip-btn tip-btn--primary">
+            {{ action.label }}
+          </button>
+        {% endfor %}
+      </div>
+    </form>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

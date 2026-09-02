@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Уязвимости · NovaTIP{% endblock %}
+{% block crumb %}Уязвимости{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Каталог уязвимостей</h1>
+    <p>NVD · KEV · БДУ ФСТЭК · локальные ID{% if brand.prefix %} ({{ brand.prefix }}-…){% endif %}
+      {% if total_count %} · всего {{ total_count }}{% endif %}
+    </p>
+  </div>
+  <div class="tip-page-actions">
+    <a class="tip-btn tip-btn--primary" href="{% url 'vulns:create' %}">Создать локальную</a>
+  </div>
+</div>
+
+<div class="tip-filter {% if filters_open or request.GET %}is-open{% endif %}" data-tip-filter>
+  <button type="button" class="tip-btn tip-filter__toggle" data-tip-filter-toggle aria-expanded="false">
+    <span data-tip-filter-label>Показать фильтры</span>
+    <span aria-hidden="true">▾</span>
+  </button>
+  <div class="tip-filter__panel">
+    <form method="get" class="tip-filter-form" data-tip-filter-form>
+      {% if form %}
+        <div class="tip-field-row">
+          <div class="tip-field">
+            <label class="tip-label" for="{{ form.q.id_for_label }}">{{ form.q.label }}</label>
+            {{ form.q }}
+          </div>
+          <div class="tip-field">
+            <label class="tip-label" for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
+            {{ form.source }}
+          </div>
+          <div class="tip-field">
+            <label class="tip-label" for="{{ form.cwe.id_for_label }}">{{ form.cwe.label }}</label>
+            {{ form.cwe }}
+          </div>
+          <div class="tip-field">
+            <label class="tip-label">&nbsp;</label>
+            <label class="tip-check">{{ form.is_kev }} {{ form.is_kev.label }}</label>
+          </div>
+        </div>
+        <div class="tip-field">
+          <label class="tip-label">{{ form.severity.label }}</label>
+          <div class="tip-row-actions">{{ form.severity }}</div>
+        </div>
+      {% else %}
+        <div class="tip-field-row">
+          <div class="tip-field">
+            <label class="tip-label" for="f-q">Поиск</label>
+            <input class="tip-input" id="f-q" name="q" value="{{ request.GET.q|default:'' }}">
+          </div>
+          <div class="tip-field">
+            <label class="tip-label" for="f-src">Источник</label>
+            <select class="tip-select" id="f-src" name="source">
+              <option value="">Все</option>
+              <option value="NVD" {% if request.GET.source == 'NVD' %}selected{% endif %}>NVD</option>
+              <option value="BDU" {% if request.GET.source == 'BDU' %}selected{% endif %}>BDU</option>
+              <option value="LOCAL" {% if request.GET.source == 'LOCAL' %}selected{% endif %}>LOCAL</option>
+            </select>
+          </div>
+        </div>
+      {% endif %}
+      <div class="tip-page-actions">
+        <button type="submit" class="tip-btn tip-btn--primary">Применить</button>
+        <a class="tip-btn tip-btn--ghost" href="{% url 'vulns:list' %}">Сбросить</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if chips %}
+  <div class="tip-chips" aria-label="Активные фильтры">
+    {% for chip in chips %}
+      <span class="tip-chip" data-tip-chip>
+        {{ chip.label }}
+        <button type="button" class="tip-chip__x" data-tip-chip-remove="{{ chip.key }}" aria-label="Убрать">&times;</button>
+      </span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="tip-panel">
+  <div class="tip-panel__body tip-panel__body--flush">
+    <div class="tip-table-wrap">
+      <table class="tip-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Критичность</th>
+            <th>CVSS</th>
+            <th>Флаги</th>
+            <th>Заголовок</th>
+            <th>Опубликовано</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in page_obj %}
+            <tr>
+              <td class="tip-mono"><a href="{% url 'vulns:detail' v.pk %}">{{ v.vuln_id }}</a></td>
+              <td><span class="tip-badge tip-badge--{{ v.severity|lower }}">{{ v.severity }}</span></td>
+              <td class="tip-mono">{{ v.max_cvss_score|default:"—" }}</td>
+              <td>
+                {% if v.is_kev %}<span class="tip-badge tip-badge--kev">KEV</span>{% endif %}
+                {% if v.source == 'BDU' or v.description_bdu %}<span class="tip-badge tip-badge--bdu">BDU</span>{% endif %}
+                {% if v.source == 'LOCAL' %}<span class="tip-badge tip-badge--local">LOCAL</span>{% endif %}
+              </td>
+              <td>{{ v.title|truncatechars:80|default:"—" }}</td>
+              <td>{{ v.published_at|date:"d.m.Y"|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="tip-empty">Записи не найдены</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "partials/pagination.html" %}
+  </div>
+</div>
+{% endblock %}

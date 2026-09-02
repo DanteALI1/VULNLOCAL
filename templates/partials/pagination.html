@@ -1,0 +1,35 @@
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav class="tip-pager" aria-label="Страницы">
+  <div>
+    Показано {{ page_obj.start_index }}–{{ page_obj.end_index }}
+    из {{ page_obj.paginator.count }}
+  </div>
+  <div class="tip-pager__links">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">‹</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if num == page_obj.number %}
+        <span class="is-current" aria-current="page">{{ num }}</span>
+      {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">›</a>
+    {% endif %}
+  </div>
+</nav>
+{% elif is_paginated %}
+<nav class="tip-pager" aria-label="Страницы">
+  <div class="tip-pager__links">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">‹ Назад</a>
+    {% endif %}
+    <span class="is-current">{{ page_obj.number }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Вперёд ›</a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

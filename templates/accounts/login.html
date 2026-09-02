@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход · {{ brand.login_title|default:"NovaTIP" }}</title>
+  <link rel="stylesheet" href="{% static 'css/tip-console.css' %}">
+</head>
+<body>
+<div class="tip-login">
+  <section class="tip-login__brand" aria-label="Брендинг">
+    <div class="tip-cyber" aria-hidden="true">
+      <div class="tip-cyber__grid"></div>
+      <div class="tip-cyber__hex"></div>
+      <div class="tip-cyber__nodes"></div>
+      <div class="tip-cyber__scan"></div>
+    </div>
+    <div class="tip-login__brand-content">
+      {% if brand.logo %}
+        <img class="tip-login__logo" src="{{ brand.logo.url }}" alt="{{ brand.org|default:'NovaTIP' }}">
+      {% else %}
+        <div class="tip-login__mark" aria-hidden="true">NT</div>
+      {% endif %}
+      <h1 class="tip-login__title">{{ brand.login_title|default:"NovaTIP" }}</h1>
+      <p class="tip-login__subtitle">{{ brand.login_subtitle|default:"Threat Intelligence Platform" }}</p>
+    </div>
+  </section>
+
+  <section class="tip-login__panel">
+    <div class="tip-login__card">
+      <h1>Вход в систему</h1>
+      <p class="tip-muted">Используйте учётную запись, выданную администратором. Самостоятельная регистрация отключена.</p>
+
+      {% include "partials/messages.html" %}
+
+      {% if form.non_field_errors %}
+        <div class="tip-login__error">{{ form.non_field_errors|striptags }}</div>
+      {% endif %}
+
+      <form method="post" action="{% url 'accounts:login' %}" novalidate>
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+        <div class="tip-field">
+          <label class="tip-label" for="id_username">Логин</label>
+          {{ form.username }}
+          {% if form.username.errors %}<div class="tip-login__error">{{ form.username.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="id_password">Пароль</label>
+          {{ form.password }}
+          {% if form.password.errors %}<div class="tip-login__error">{{ form.password.errors|striptags }}</div>{% endif %}
+        </div>
+        <button type="submit" class="tip-btn tip-btn--primary tip-btn--block">Войти</button>
+      </form>
+    </div>
+  </section>
+</div>
+</body>
+</html>

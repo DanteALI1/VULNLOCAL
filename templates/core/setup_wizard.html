@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мастер настройки · NovaTIP</title>
+  <link rel="stylesheet" href="{% static 'css/tip-console.css' %}">
+</head>
+<body>
+<div class="tip-setup-shell">
+  <div class="tip-setup-shell__brand">
+    <strong>NovaTIP</strong>
+    <div class="tip-muted" style="margin-top:4px">Мастер первоначальной настройки</div>
+  </div>
+
+  <div class="tip-wizard">
+    <div class="tip-steps" role="navigation" aria-label="Шаги мастера">
+      {% for num, label in steps %}
+        <a class="tip-step {% if num == step %}is-active{% elif num < step %}is-done{% endif %}"
+           href="?step={{ num }}">
+          <span class="tip-step__num">{{ num }}</span>
+          <span class="tip-step__label">{{ label }}</span>
+        </a>
+      {% endfor %}
+    </div>
+
+    {% include "partials/messages.html" %}
+
+    <div class="tip-panel">
+      <div class="tip-panel__head">
+        <h1 class="tip-panel__title">Шаг {{ step }}. {{ step_title }}</h1>
+      </div>
+      <div class="tip-panel__body">
+        {% block wizard_body %}
+          {% if form %}
+            <form method="post" enctype="multipart/form-data" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="step" value="{{ step }}">
+
+              {% if step == 4 %}
+                <div class="tip-field" style="margin-bottom:14px">
+                  <div class="tip-seg" role="group" aria-label="Режим БД">
+                    <a class="tip-seg__btn {% if db_mode != 'create' %}is-active{% endif %}" href="?step=4&db_mode=connect">Подключиться</a>
+                    <a class="tip-seg__btn {% if db_mode == 'create' %}is-active{% endif %}" href="?step=4&db_mode=create">Создать УЗ и БД</a>
+                  </div>
+                  <input type="hidden" name="db_mode" value="{{ db_mode|default:'connect' }}">
+                  <p class="tip-help">УЗ PostgreSQL ≠ пользователь веб-интерфейса NovaTIP. Пароль суперпользователя не сохраняется.</p>
+                </div>
+              {% endif %}
+
+              {% for field in form %}
+                <div class="tip-field">
+                  {% if field.field.widget.input_type == 'checkbox' %}
+                    <label class="tip-check">{{ field }} {{ field.label }}</label>
+                  {% else %}
+                    <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                  {% endif %}
+                  {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
+                  {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+                </div>
+              {% endfor %}
+              {% if form.non_field_errors %}
+                <div class="tip-alert tip-alert--error">{{ form.non_field_errors|striptags }}</div>
+              {% endif %}
+
+              <div class="tip-page-actions" style="margin-top:16px">
+                {% if step == 4 and db_mode != 'create' %}
+                  <button type="submit" name="action" value="test" class="tip-btn">Проверить подключение</button>
+                  <button type="submit" name="action" value="save" class="tip-btn tip-btn--primary">Сохранить и продолжить</button>
+                {% elif step == 4 and db_mode == 'create' %}
+                  <button type="submit" class="tip-btn tip-btn--primary">Создать УЗ и выдать права</button>
+                {% elif step == 9 %}
+                  <button type="submit" class="tip-btn tip-btn--primary">Завершить и перейти ко входу</button>
+                {% else %}
+                  <button type="submit" class="tip-btn tip-btn--primary">Далее</button>
+                {% endif %}
+              </div>
+            </form>
+          {% else %}
+            {% if step == 9 %}
+              <p>Проверьте параметры и завершите настройку. После финиша откроется страница входа.</p>
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="9">
+                <button type="submit" class="tip-btn tip-btn--primary">Завершить</button>
+              </form>
+            {% else %}
+              <p class="tip-muted">Заполните форму шага.</p>
+            {% endif %}
+          {% endif %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/tip-ui.js' %}"></script>
+</body>
+</html>

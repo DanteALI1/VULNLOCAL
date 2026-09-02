@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-login">
+  <section class="tip-login__brand">
+    <div class="tip-cyber" aria-hidden="true">
+      <div class="tip-cyber__grid"></div>
+      <div class="tip-cyber__hex"></div>
+      <div class="tip-cyber__nodes"></div>
+      <div class="tip-cyber__scan"></div>
+    </div>
+    <div class="tip-login__brand-content">
+      <div class="tip-login__mark">NT</div>
+      <h1 class="tip-login__title">NovaTIP</h1>
+      <p class="tip-login__subtitle">Threat Intelligence Platform — локальный каталог уязвимостей NVD, KEV и БДУ ФСТЭК</p>
+    </div>
+  </section>
+  <section class="tip-login__panel">
+    <div class="tip-login__card">
+      <h1>Вход в систему</h1>
+      <p class="tip-muted">Самостоятельная регистрация отключена.</p>
+      <form action="#" method="get">
+        <div class="tip-field">
+          <label class="tip-label" for="u">Логин</label>
+          <input class="tip-input" id="u" name="username" autocomplete="username">
+        </div>
+        <div class="tip-field">
+          <label class="tip-label" for="p">Пароль</label>
+          <input class="tip-input" id="p" type="password" name="password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="tip-btn tip-btn--primary tip-btn--block">Войти</button>
+      </form>
+    </div>
+  </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Заявки · NovaTIP{% endblock %}
+{% block crumb %}Заявки{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Заявки на устранение</h1>
+    <p>Жизненный цикл: new → triage → in_progress → waiting → resolved → closed</p>
+  </div>
+  <div class="tip-page-actions">
+    {% if can_create %}
+      <a class="tip-btn tip-btn--primary" href="{% url 'tickets:create' %}">Новая заявка</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="tip-filter" data-tip-filter>
+  <button type="button" class="tip-btn tip-filter__toggle" data-tip-filter-toggle aria-expanded="false">
+    <span data-tip-filter-label>Показать фильтры</span>
+    <span aria-hidden="true">▾</span>
+  </button>
+  <div class="tip-filter__panel">
+    <form method="get" class="tip-filter-form" data-tip-filter-form>
+      {% if form %}
+        <div class="tip-field-row">
+          {% for field in form %}
+            <div class="tip-field">
+              <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="tip-field-row">
+          <div class="tip-field">
+            <label class="tip-label" for="t-q">Поиск</label>
+            <input class="tip-input" id="t-q" name="q" value="{{ request.GET.q|default:'' }}">
+          </div>
+        </div>
+      {% endif %}
+      <div class="tip-page-actions">
+        <button type="submit" class="tip-btn tip-btn--primary">Применить</button>
+        <a class="tip-btn tip-btn--ghost" href="{% url 'tickets:list' %}">Сбросить</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="tip-panel">
+  <div class="tip-panel__body tip-panel__body--flush">
+    <div class="tip-table-wrap">
+      <table class="tip-table">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Уязвимость</th>
+            <th>Статус</th>
+            <th>Приоритет</th>
+            <th>Исполнитель</th>
+            <th>Обновлено</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in page_obj %}
+            <tr>
+              <td class="tip-mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
+              <td class="tip-mono">
+                {% if t.vulnerability %}
+                  <a href="{% url 'vulns:detail' t.vulnerability_id %}">{{ t.vulnerability.vuln_id }}</a>
+                {% else %}—{% endif %}
+              </td>
+              <td><span class="tip-badge tip-badge--muted">{{ t.get_status_display }}</span></td>
+              <td>{{ t.get_priority_display }}</td>
+              <td>{{ t.assignee|default:"—" }}</td>
+              <td>{{ t.updated_at|date:"d.m.Y H:i"|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="tip-empty">Заявок нет</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "partials/pagination.html" %}
+  </div>
+</div>
+{% endblock %}

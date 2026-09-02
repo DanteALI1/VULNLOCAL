@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Лицензия · NovaTIP{% endblock %}
+{% block crumb %}Лицензия{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Статус лицензии</h1>
+    <p>Файл `.novalic`, online heartbeat и offline grace (14 дней)</p>
+  </div>
+</div>
+
+<div class="tip-grid-2">
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">Текущий статус</h2></div>
+    <div class="tip-panel__body">
+      <div class="tip-field">
+        <div class="tip-label">Состояние</div>
+        {% with st=status_info.status|default:state.status %}
+          {% if st == 'ok' or st == 'valid' or st == 'active' %}
+            <span class="tip-badge tip-badge--ok">Активна</span>
+          {% elif st == 'grace' %}
+            <span class="tip-badge tip-badge--warn">Grace-период</span>
+          {% else %}
+            <span class="tip-badge tip-badge--danger">{{ st|default:"нет данных" }}</span>
+          {% endif %}
+        {% endwith %}
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Организация</div>
+        <div>{{ state.payload.org|default:status_info.org|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Срок</div>
+        <div>{{ state.expires_at|date:"d.m.Y H:i"|default:status_info.expires|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">Fingerprint узла</div>
+        <div class="tip-mono">{{ fingerprint|default:state.fingerprint|default:"—" }}</div>
+      </div>
+      <div class="tip-field">
+        <div class="tip-label">License Server</div>
+        <div class="tip-mono">{{ state.server_url|default:"—" }}</div>
+      </div>
+      {% if state.last_check_at %}
+        <div class="tip-field">
+          <div class="tip-label">Последняя проверка</div>
+          <div>{{ state.last_check_at|date:"d.m.Y H:i" }}</div>
+        </div>
+      {% endif %}
+      <form method="post" style="margin-top:12px">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="recheck">
+        <button type="submit" class="tip-btn">Проверить сейчас</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">Загрузить лицензию</h2></div>
+    <div class="tip-panel__body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="upload">
+        {% if form %}
+          {% for field in form %}
+            <div class="tip-field">
+              <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
+              {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="tip-field">
+            <label class="tip-label" for="id_license_file">Файл .novalic</label>
+            <input class="tip-input" type="file" id="id_license_file" name="license_file" accept=".novalic" required>
+          </div>
+        {% endif %}
+        <button type="submit" class="tip-btn tip-btn--primary">Установить</button>
+      </form>
+      {% if user.is_platform_admin %}
+        <form method="post" style="margin-top:12px">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="dev_grace">
+          <button type="submit" class="tip-btn tip-btn--ghost" data-confirm="Включить dev grace на 14 дней?">Dev grace (14 дней)</button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
