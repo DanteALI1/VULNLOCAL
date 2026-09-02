@@ -50,7 +50,22 @@ class SetupWizardView(View):
         if SystemSettings.get_solo().setup_completed:
             return redirect("core:dashboard")
         step = int(request.GET.get("step", SetupProgress.get_solo().current_step or 1))
-        return self._render(request, step)
+        return self._render(request, step, form=self._form_for_step(request, step))
+
+    def _form_for_step(self, request, step: int):
+        db_mode = request.GET.get("db_mode") or request.POST.get("db_mode") or "connect"
+        mapping = {
+            1: LicenseStepForm,
+            2: OrgStepForm,
+            3: BrandingStepForm,
+            4: DbCreateForm if db_mode == "create" else DbConnectForm,
+            5: AdminStepForm,
+            6: SourcesStepForm,
+            7: MailStepForm,
+            8: TelegramStepForm,
+        }
+        form_cls = mapping.get(step)
+        return form_cls() if form_cls else None
 
     def post(self, request):
         step = int(request.POST.get("step", 1))
