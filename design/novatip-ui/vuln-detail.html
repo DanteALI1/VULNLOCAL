@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CVE-2024-1234 · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-app">
+  <aside class="tip-sidebar">
+    <div class="tip-sidebar__brand"><div class="tip-sidebar__logo-mark">NT</div><div class="tip-sidebar__title">NovaTIP</div></div>
+    <nav class="tip-sidebar__nav">
+      <a class="tip-nav-link" href="dashboard.html"><span>Дашборд</span></a>
+      <a class="tip-nav-link is-active" href="vulns.html"><span>Уязвимости</span></a>
+      <a class="tip-nav-link" href="tickets.html"><span>Заявки</span></a>
+      <a class="tip-nav-link" href="settings.html"><span>Настройки</span></a>
+    </nav>
+    <div class="tip-sidebar__foot">NovaTIP · Threat Intelligence</div>
+  </aside>
+  <div class="tip-main">
+    <header class="tip-topbar">
+      <div class="tip-topbar__crumb">Уязвимости / CVE-2024-1234</div>
+      <div class="tip-topbar__right"><span class="tip-badge tip-badge--ok">Лицензия: активна</span></div>
+    </header>
+    <main class="tip-content">
+      <div class="tip-vuln-head">
+        <div>
+          <h1 class="tip-vuln-id">CVE-2024-1234</h1>
+          <div class="tip-vuln-meta">
+            <span class="tip-badge tip-badge--critical">CRITICAL</span>
+            <span class="tip-badge tip-badge--kev">KEV</span>
+            <span class="tip-badge tip-badge--bdu">BDU:2024-01234</span>
+            <span class="tip-muted">Опубликовано 12.03.2024</span>
+          </div>
+          <p style="margin:8px 0 0;font-weight:600">Remote code execution in example service</p>
+        </div>
+        <div class="tip-page-actions"><button class="tip-btn tip-btn--primary" type="button">Создать заявку</button></div>
+      </div>
+
+      <section class="tip-panel">
+        <div class="tip-panel__head">
+          <h2 class="tip-panel__title">Описание</h2>
+          <div class="tip-seg" data-tip-seg="desc">
+            <button type="button" class="tip-seg__btn is-active" data-tip-seg-btn="nvd">NVD</button>
+            <button type="button" class="tip-seg__btn" data-tip-seg-btn="bdu">BDU</button>
+          </div>
+        </div>
+        <div class="tip-panel__body">
+          <div class="tip-desc-pane is-active tip-prose" data-tip-seg-pane="desc" data-tip-seg-value="nvd">
+            An unauthenticated attacker can execute arbitrary code via crafted network packets due to improper input validation in the management interface.
+          </div>
+          <div class="tip-desc-pane tip-prose" data-tip-seg-pane="desc" data-tip-seg-value="bdu">
+            Уязвимость связана с недостаточной проверкой входных данных в интерфейсе управления. Эксплуатация возможна удалённо без аутентификации.
+          </div>
+        </div>
+      </section>
+
+      <section class="tip-panel">
+        <div class="tip-panel__head">
+          <h2 class="tip-panel__title">Метрики CVSS</h2>
+          <div class="tip-seg" data-tip-seg="cvss">
+            <button type="button" class="tip-seg__btn is-active" data-tip-seg-btn="3.1">3.1</button>
+            <button type="button" class="tip-seg__btn" data-tip-seg-btn="3.0">3.0</button>
+            <button type="button" class="tip-seg__btn" data-tip-seg-btn="2.0">2.0</button>
+            <button type="button" class="tip-seg__btn" data-tip-seg-btn="4.0">4.0</button>
+          </div>
+        </div>
+        <div class="tip-panel__body">
+          <div class="tip-cvss-pane is-active" data-tip-seg-pane="cvss" data-tip-seg-value="3.1">
+            <div class="tip-score" style="margin-bottom:10px">
+              <span class="tip-score__num">9.8</span>
+              <span class="tip-badge tip-badge--critical">CRITICAL</span>
+              <span class="tip-mono tip-muted">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</span>
+            </div>
+            <div class="tip-cvss-grid">
+              <div class="tip-cvss-metric"><div class="tip-cvss-metric__k">AV</div><div class="tip-cvss-metric__v">NETWORK</div></div>
+              <div class="tip-cvss-metric"><div class="tip-cvss-metric__k">AC</div><div class="tip-cvss-metric__v">LOW</div></div>
+              <div class="tip-cvss-metric"><div class="tip-cvss-metric__k">PR</div><div class="tip-cvss-metric__v">NONE</div></div>
+              <div class="tip-cvss-metric"><div class="tip-cvss-metric__k">UI</div><div class="tip-cvss-metric__v">NONE</div></div>
+            </div>
+          </div>
+          <div class="tip-cvss-pane" data-tip-seg-pane="cvss" data-tip-seg-value="3.0">
+            <div class="tip-score"><span class="tip-score__num">9.8</span><span class="tip-mono tip-muted">CVSS:3.0/…</span></div>
+          </div>
+          <div class="tip-cvss-pane" data-tip-seg-pane="cvss" data-tip-seg-value="2.0">
+            <div class="tip-score"><span class="tip-score__num">10.0</span><span class="tip-mono tip-muted">AV:N/AC:L/Au:N/C:C/I:C/A:C</span></div>
+          </div>
+          <div class="tip-cvss-pane" data-tip-seg-pane="cvss" data-tip-seg-value="4.0">
+            <div class="tip-score"><span class="tip-score__num">9.3</span><span class="tip-mono tip-muted">CVSS:4.0/…</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="tip-grid-2">
+        <section class="tip-panel">
+          <div class="tip-panel__head"><h2 class="tip-panel__title">CWE</h2></div>
+          <div class="tip-panel__body"><ul class="tip-list-compact"><li class="tip-mono">CWE-94</li><li class="tip-mono">CWE-20</li></ul></div>
+        </section>
+        <section class="tip-panel">
+          <div class="tip-panel__head"><h2 class="tip-panel__title">CPE</h2></div>
+          <div class="tip-panel__body"><ul class="tip-list-compact"><li class="tip-mono">cpe:2.3:a:example:service:1.0:*:*:*:*:*:*:*</li></ul></div>
+        </section>
+      </div>
+
+      <section class="tip-panel">
+        <div class="tip-panel__head"><h2 class="tip-panel__title">Ссылки</h2></div>
+        <div class="tip-panel__body"><ul class="tip-list-compact"><li><a href="#">https://nvd.nist.gov/vuln/detail/CVE-2024-1234</a></li></ul></div>
+      </section>
+
+      <section class="tip-panel">
+        <div class="tip-panel__head"><h2 class="tip-panel__title">Связанные заявки</h2></div>
+        <div class="tip-panel__body tip-panel__body--flush">
+          <table class="tip-table"><thead><tr><th>№</th><th>Статус</th></tr></thead>
+          <tbody><tr><td class="tip-mono"><a href="tickets.html">T-1042</a></td><td>in_progress</td></tr></tbody></table>
+        </div>
+      </section>
+
+      <section class="tip-panel">
+        <div class="tip-panel__head"><h2 class="tip-panel__title">История</h2></div>
+        <div class="tip-panel__body">
+          <ul class="tip-timeline">
+            <li><div class="tip-timeline__when">12.03.2024 10:00</div><div class="tip-timeline__what">Импорт из NVD</div></li>
+            <li><div class="tip-timeline__when">12.03.2024 11:20</div><div class="tip-timeline__what">Обогащение KEV + BDU</div></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="js/tip-ui.js"></script>
+</body>
+</html>

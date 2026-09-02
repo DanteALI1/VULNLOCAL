@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Уязвимости · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-app">
+  <aside class="tip-sidebar">
+    <div class="tip-sidebar__brand"><div class="tip-sidebar__logo-mark">NT</div><div class="tip-sidebar__title">NovaTIP</div></div>
+    <nav class="tip-sidebar__nav">
+      <a class="tip-nav-link" href="dashboard.html"><span>Дашборд</span></a>
+      <a class="tip-nav-link is-active" href="vulns.html"><span>Уязвимости</span></a>
+      <a class="tip-nav-link" href="tickets.html"><span>Заявки</span></a>
+      <a class="tip-nav-link" href="settings.html"><span>Настройки</span></a>
+    </nav>
+    <div class="tip-sidebar__foot">NovaTIP · Threat Intelligence</div>
+  </aside>
+  <div class="tip-main">
+    <header class="tip-topbar">
+      <div class="tip-topbar__crumb">Уязвимости</div>
+      <div class="tip-topbar__right"><span class="tip-badge tip-badge--ok">Лицензия: активна</span></div>
+    </header>
+    <main class="tip-content">
+      <div class="tip-page-head">
+        <div><h1>Каталог уязвимостей</h1><p>NVD · KEV · БДУ · локальные ID</p></div>
+        <div class="tip-page-actions"><button class="tip-btn tip-btn--primary" type="button">Создать локальную</button></div>
+      </div>
+      <div class="tip-filter is-open" data-tip-filter>
+        <button type="button" class="tip-btn tip-filter__toggle" data-tip-filter-toggle aria-expanded="true">
+          <span data-tip-filter-label>Скрыть фильтры</span><span>▾</span>
+        </button>
+        <div class="tip-filter__panel">
+          <div class="tip-field-row">
+            <div class="tip-field"><label class="tip-label">Поиск</label><input class="tip-input" value="openssl"></div>
+            <div class="tip-field"><label class="tip-label">Критичность</label><select class="tip-select"><option>HIGH</option></select></div>
+            <div class="tip-field"><label class="tip-label">Источник</label><select class="tip-select"><option>Все</option></select></div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-chips">
+        <span class="tip-chip" data-tip-chip>Поиск: openssl <button type="button" class="tip-chip__x" data-tip-chip-remove="q">&times;</button></span>
+        <span class="tip-chip" data-tip-chip>Критичность: HIGH <button type="button" class="tip-chip__x" data-tip-chip-remove="severity">&times;</button></span>
+      </div>
+      <div class="tip-panel">
+        <div class="tip-panel__body tip-panel__body--flush">
+          <table class="tip-table">
+            <thead><tr><th>ID</th><th>Критичность</th><th>CVSS</th><th>Флаги</th><th>Заголовок</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="tip-mono"><a href="vuln-detail.html">CVE-2024-1234</a></td>
+                <td><span class="tip-badge tip-badge--critical">CRITICAL</span></td>
+                <td class="tip-mono">9.8</td>
+                <td><span class="tip-badge tip-badge--kev">KEV</span> <span class="tip-badge tip-badge--bdu">BDU</span></td>
+                <td>Remote code execution in example service</td>
+              </tr>
+              <tr>
+                <td class="tip-mono"><a href="vuln-detail.html">CVE-2023-4455</a></td>
+                <td><span class="tip-badge tip-badge--high">HIGH</span></td>
+                <td class="tip-mono">7.5</td>
+                <td></td>
+                <td>OpenSSL denial of service</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="js/tip-ui.js"></script>
+</body>
+</html>

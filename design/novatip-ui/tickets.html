@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заявки · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-app">
+  <aside class="tip-sidebar">
+    <div class="tip-sidebar__brand"><div class="tip-sidebar__logo-mark">NT</div><div class="tip-sidebar__title">NovaTIP</div></div>
+    <nav class="tip-sidebar__nav">
+      <a class="tip-nav-link" href="dashboard.html"><span>Дашборд</span></a>
+      <a class="tip-nav-link" href="vulns.html"><span>Уязвимости</span></a>
+      <a class="tip-nav-link is-active" href="tickets.html"><span>Заявки</span></a>
+      <a class="tip-nav-link" href="settings.html"><span>Настройки</span></a>
+    </nav>
+    <div class="tip-sidebar__foot">NovaTIP · Threat Intelligence</div>
+  </aside>
+  <div class="tip-main">
+    <header class="tip-topbar">
+      <div class="tip-topbar__crumb">Заявки / T-1042</div>
+      <div class="tip-topbar__right"><span class="tip-badge tip-badge--ok">Лицензия: активна</span></div>
+    </header>
+    <main class="tip-content">
+      <div class="tip-page-head">
+        <div>
+          <h1>Заявка T-1042</h1>
+          <p><span class="tip-badge tip-badge--muted">in_progress</span> · Приоритет: High · <a class="tip-mono" href="vuln-detail.html">CVE-2024-1234</a></p>
+        </div>
+        <div class="tip-page-actions tip-row-actions">
+          <button type="button" class="tip-btn">Перевести в waiting</button>
+          <button type="button" class="tip-btn tip-btn--primary" data-confirm="Отметить заявку как устранённую?">resolved</button>
+        </div>
+      </div>
+
+      <div class="tip-panel" style="margin-bottom:12px">
+        <div class="tip-panel__head"><h2 class="tip-panel__title">Список заявок</h2></div>
+        <div class="tip-panel__body tip-panel__body--flush">
+          <table class="tip-table">
+            <thead><tr><th>№</th><th>Уязвимость</th><th>Статус</th><th>Приоритет</th><th>Исполнитель</th></tr></thead>
+            <tbody>
+              <tr><td class="tip-mono">T-1042</td><td class="tip-mono">CVE-2024-1234</td><td><span class="tip-badge tip-badge--muted">in_progress</span></td><td>High</td><td>ivanov</td></tr>
+              <tr><td class="tip-mono">T-1038</td><td class="tip-mono">CVE-2023-9988</td><td><span class="tip-badge tip-badge--muted">triage</span></td><td>Critical</td><td>—</td></tr>
+              <tr><td class="tip-mono">T-1020</td><td class="tip-mono">ACME-2026-0001</td><td><span class="tip-badge tip-badge--muted">resolved</span></td><td>Medium</td><td>petrov</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tip-grid-2">
+        <section class="tip-panel">
+          <div class="tip-panel__head"><h2 class="tip-panel__title">Карточка T-1042</h2></div>
+          <div class="tip-panel__body">
+            <div class="tip-field"><div class="tip-label">Постановщик</div><div>analyst01</div></div>
+            <div class="tip-field"><div class="tip-label">Исполнитель</div><div>ivanov</div></div>
+            <div class="tip-field"><div class="tip-label">Описание</div><div class="tip-prose">Устранить RCE на периметре до пятницы. Согласовать окно работ с NOC.</div></div>
+          </div>
+        </section>
+        <section class="tip-panel">
+          <div class="tip-panel__head"><h2 class="tip-panel__title">История статусов</h2></div>
+          <div class="tip-panel__body">
+            <ul class="tip-timeline">
+              <li><div class="tip-timeline__when">10.03.2026 09:00</div><div class="tip-timeline__what">new → triage</div></li>
+              <li><div class="tip-timeline__when">10.03.2026 11:30</div><div class="tip-timeline__what">triage → in_progress · принято исполнителем</div></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="js/htmx-lite.js"></script>
+<script src="js/tip-ui.js"></script>
+</body>
+</html>

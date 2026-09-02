@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Настройки · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-app">
+  <aside class="tip-sidebar">
+    <div class="tip-sidebar__brand"><div class="tip-sidebar__logo-mark">NT</div><div class="tip-sidebar__title">NovaTIP</div></div>
+    <nav class="tip-sidebar__nav">
+      <a class="tip-nav-link" href="dashboard.html"><span>Дашборд</span></a>
+      <a class="tip-nav-link" href="vulns.html"><span>Уязвимости</span></a>
+      <a class="tip-nav-link" href="tickets.html"><span>Заявки</span></a>
+      <a class="tip-nav-link is-active" href="settings.html"><span>Настройки</span></a>
+    </nav>
+    <div class="tip-sidebar__foot">NovaTIP · Threat Intelligence</div>
+  </aside>
+  <div class="tip-main">
+    <header class="tip-topbar">
+      <div class="tip-topbar__crumb">Настройки</div>
+      <div class="tip-topbar__right"><span class="tip-badge tip-badge--ok">Лицензия: активна</span></div>
+    </header>
+    <main class="tip-content">
+      <div class="tip-page-head">
+        <div><h1>Настройки</h1><p>Синхронизация живёт здесь, не в главном меню</p></div>
+      </div>
+      <div class="tip-tabs" data-tip-tabs="settings" data-tip-tab-active="sync" role="tablist">
+        <button type="button" class="tip-tab" data-tip-tab="org">Организация</button>
+        <button type="button" class="tip-tab" data-tip-tab="brand">Оформление</button>
+        <button type="button" class="tip-tab is-active" data-tip-tab="sync">Источники / Sync</button>
+        <button type="button" class="tip-tab" data-tip-tab="mail">Почта</button>
+        <button type="button" class="tip-tab" data-tip-tab="telegram">Telegram</button>
+        <button type="button" class="tip-tab" data-tip-tab="db">БД</button>
+      </div>
+      <div data-tip-tab-panes="settings">
+        <div class="tip-tab-pane" data-tip-tab-pane="org">
+          <div class="tip-panel"><div class="tip-panel__body">
+            <div class="tip-field"><label class="tip-label">Организация</label><input class="tip-input" value="ACME Security"></div>
+            <div class="tip-field"><label class="tip-label">Префикс локальных ID</label><input class="tip-input" value="ACME"></div>
+          </div></div>
+        </div>
+        <div class="tip-tab-pane" data-tip-tab-pane="brand">
+          <div class="tip-panel"><div class="tip-panel__body">
+            <div class="tip-field"><label class="tip-label">Заголовок login</label><input class="tip-input" value="NovaTIP"></div>
+            <div class="tip-field"><label class="tip-label">Подзаголовок</label><textarea class="tip-textarea">Threat Intelligence Platform</textarea></div>
+          </div></div>
+        </div>
+        <div class="tip-tab-pane is-active" data-tip-tab-pane="sync">
+          <div class="tip-panel">
+            <div class="tip-panel__head"><h2 class="tip-panel__title">Источники и синхронизация</h2></div>
+            <div class="tip-panel__body">
+              <div class="tip-field"><label class="tip-label">NVD API Key</label><input class="tip-input" type="password" value="••••••••"></div>
+              <label class="tip-check"><input type="checkbox" checked> Синхронизировать KEV (CISA)</label>
+              <label class="tip-check"><input type="checkbox" checked> Синхронизировать БДУ ФСТЭК</label>
+              <div class="tip-field" style="margin-top:12px"><label class="tip-label">Расписание (cron)</label><input class="tip-input" value="0 * * * *"></div>
+              <div class="tip-page-actions">
+                <button type="button" class="tip-btn tip-btn--primary">Сохранить</button>
+                <button type="button" class="tip-btn" data-confirm="Запустить синхронизацию сейчас?">Синхронизировать сейчас</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tip-tab-pane" data-tip-tab-pane="mail">
+          <div class="tip-panel"><div class="tip-panel__body">
+            <div class="tip-field"><label class="tip-label">SMTP host</label><input class="tip-input" placeholder="mail.example.local"></div>
+            <div class="tip-field"><label class="tip-label">Port</label><input class="tip-input" value="587"></div>
+          </div></div>
+        </div>
+        <div class="tip-tab-pane" data-tip-tab-pane="telegram">
+          <div class="tip-panel"><div class="tip-panel__body">
+            <div class="tip-field"><label class="tip-label">Bot token</label><input class="tip-input"></div>
+            <div class="tip-field"><label class="tip-label">Chat ID</label><input class="tip-input"></div>
+          </div></div>
+        </div>
+        <div class="tip-tab-pane" data-tip-tab-pane="db">
+          <div class="tip-panel">
+            <div class="tip-panel__head"><h2 class="tip-panel__title">База данных (только просмотр)</h2></div>
+            <div class="tip-panel__body tip-field-row">
+              <div class="tip-field"><label class="tip-label">Host</label><input class="tip-input tip-readonly" readonly value="127.0.0.1"></div>
+              <div class="tip-field"><label class="tip-label">Port</label><input class="tip-input tip-readonly" readonly value="5432"></div>
+              <div class="tip-field"><label class="tip-label">База</label><input class="tip-input tip-readonly" readonly value="novatip"></div>
+              <div class="tip-field"><label class="tip-label">Пользователь</label><input class="tip-input tip-readonly" readonly value="novatip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="js/htmx-lite.js"></script>
+<script src="js/tip-ui.js"></script>
+</body>
+</html>

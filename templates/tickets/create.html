@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Новая заявка · NovaTIP{% endblock %}
+{% block crumb %}Заявки / Создать{% endblock %}
+
+{% block content %}
+<div class="tip-page-head">
+  <div>
+    <h1>Новая заявка</h1>
+    <p>Связь с уязвимостью и приоритет обязательны</p>
+  </div>
+</div>
+
+<div class="tip-panel" style="max-width:720px">
+  <div class="tip-panel__body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="tip-field">
+          <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
+          {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <div class="tip-alert tip-alert--error">{{ form.non_field_errors|striptags }}</div>
+      {% endif %}
+      <div class="tip-page-actions">
+        <button type="submit" class="tip-btn tip-btn--primary">Создать</button>
+        <a class="tip-btn tip-btn--ghost" href="{% url 'tickets:list' %}">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

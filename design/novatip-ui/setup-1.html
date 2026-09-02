@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мастер · шаг 1 · NovaTIP (prototype)</title>
+  <link rel="stylesheet" href="css/tip-console.css">
+</head>
+<body>
+<div class="tip-setup-shell">
+  <div class="tip-setup-shell__brand">
+    <strong>NovaTIP</strong>
+    <div class="tip-muted" style="margin-top:4px">Мастер первоначальной настройки</div>
+  </div>
+  <div class="tip-wizard">
+    <div class="tip-steps" role="navigation">
+      <a class="tip-step is-active" href="setup-1.html"><span class="tip-step__num">1</span><span class="tip-step__label">Лицензия</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">2</span><span class="tip-step__label">Организация</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">3</span><span class="tip-step__label">Оформление</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">4</span><span class="tip-step__label">База данных</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">5</span><span class="tip-step__label">Администратор</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">6</span><span class="tip-step__label">Источники</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">7</span><span class="tip-step__label">Почта</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">8</span><span class="tip-step__label">Telegram</span></a>
+      <a class="tip-step" href="#"><span class="tip-step__num">9</span><span class="tip-step__label">Финиш</span></a>
+    </div>
+    <div class="tip-panel">
+      <div class="tip-panel__head"><h1 class="tip-panel__title">Шаг 1. Лицензия</h1></div>
+      <div class="tip-panel__body">
+        <div class="tip-field">
+          <label class="tip-label">Файл лицензии (.novalic)</label>
+          <input class="tip-input" type="file" accept=".novalic">
+        </div>
+        <div class="tip-field">
+          <label class="tip-label">URL License Server</label>
+          <input class="tip-input" placeholder="https://license.example.local">
+        </div>
+        <label class="tip-check"><input type="checkbox" checked> Dev-режим: продолжить без файла (grace 14 дней)</label>
+        <div class="tip-page-actions" style="margin-top:16px">
+          <button type="button" class="tip-btn tip-btn--primary">Далее</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
