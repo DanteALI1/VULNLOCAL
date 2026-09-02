@@ -5,6 +5,8 @@
 Меню консоли: **Дашборд · Уязвимости · Заявки · Настройки**.  
 Модуль **Wiki / NovaWIKI в продукте отсутствует** (вне скоупа).
 
+![Дашборд NovaTIP](docs/screenshots/03_dashboard.png)
+
 ## Быстрый старт (Docker Compose)
 
 ```bash
@@ -38,6 +40,42 @@ docker compose up --build -d
 - HTML-прототипы: `design/novatip-ui/`
 
 Дизайн: тёмный сайдбар `#15202b`, акцент `#0a7ab8`, холст `#f4f6f8` — enterprise-консоль, не «фиолетовый SaaS».
+
+## Скриншоты
+
+### Мастер настройки
+
+| Лицензия | Организация | Создание БД |
+|---|---|---|
+| ![Шаг 1 — лицензия](docs/screenshots/01_setup_step_01.png) | ![Шаг 2 — организация](docs/screenshots/01_setup_step_02.png) | ![Шаг 4 — создать УЗ и БД](docs/screenshots/01_setup_step_04_db_create.png) |
+
+### Вход и дашборд
+
+![Страница входа](docs/screenshots/02_login.png)
+
+![Дашборд](docs/screenshots/03_dashboard.png)
+
+### Уязвимости
+
+![Каталог уязвимостей](docs/screenshots/04_vulns_list.png)
+
+![Карточка уязвимости](docs/screenshots/05_vuln_detail.png)
+
+![Создание локальной записи](docs/screenshots/05_vuln_create_local.png)
+
+### Заявки
+
+![Список заявок](docs/screenshots/06_tickets_list.png)
+
+![Карточка заявки](docs/screenshots/06_ticket_detail.png)
+
+### Настройки и лицензия
+
+![Настройки](docs/screenshots/07_settings_main.png)
+
+![Статус лицензии](docs/screenshots/08_licensing.png)
+
+Все файлы: [`docs/screenshots/`](docs/screenshots/).
 
 ## Стек
 
