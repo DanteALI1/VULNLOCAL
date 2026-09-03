@@ -1,9 +1,33 @@
 from django import forms
 
+def _style_fields(form):
+    from django import forms as djforms
+    for name, field in form.fields.items():
+        w = field.widget
+        if isinstance(w, djforms.CheckboxInput):
+            w.attrs.setdefault("class", "checkbox")
+        elif isinstance(w, djforms.Select):
+            w.attrs.setdefault("class", "select")
+        elif isinstance(w, djforms.SelectMultiple):
+            w.attrs.setdefault("class", "select")
+        elif isinstance(w, djforms.Textarea):
+            w.attrs.setdefault("class", "textarea")
+        elif isinstance(w, djforms.FileInput):
+            w.attrs.setdefault("class", "input")
+        elif isinstance(w, djforms.HiddenInput):
+            continue
+        else:
+            w.attrs.setdefault("class", "input")
+
+
 from .models import Vulnerability
 
 
 class VulnFilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _style_fields(self)
+
     q = forms.CharField(
         required=False,
         label="Поиск",
@@ -61,6 +85,10 @@ class VulnFilterForm(forms.Form):
 
 
 class LocalVulnForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _style_fields(self)
+
     class Meta:
         model = Vulnerability
         fields = [

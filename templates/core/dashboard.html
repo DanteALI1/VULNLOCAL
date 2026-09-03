@@ -1,111 +1,95 @@
 {% extends "base.html" %}
 {% block title %}Дашборд · NovaTIP{% endblock %}
-{% block crumb %}Дашборд{% endblock %}
+{% block crumb %}<strong>Дашборд</strong>{% endblock %}
 
 {% block content %}
-<div class="tip-page-head">
+<div class="page-head">
   <div>
     <h1>Дашборд</h1>
-    <p>Сводка по уязвимостям и открытым заявкам{% if now %} · {{ now|date:"d.m.Y H:i" }}{% endif %}</p>
+    <p>Сводка по каталогу (NVD + локальные{% if brand.prefix %} {{ brand.prefix }}-*{% endif %}), KEV и заявкам{% if now %} · {{ now|date:"d.m.Y H:i" }}{% endif %}</p>
   </div>
-  <div class="tip-page-actions">
-    <a class="tip-btn" href="{% url 'vulns:list' %}">Каталог</a>
-    <a class="tip-btn tip-btn--primary" href="{% url 'tickets:list' %}">Заявки</a>
-  </div>
-</div>
-
-<div class="tip-kpi-grid">
-  <div class="tip-kpi tip-kpi--critical">
-    <div class="tip-kpi__label">Critical</div>
-    <div class="tip-kpi__value">{{ kpis.critical|default:0 }}</div>
-    <div class="tip-kpi__hint">критическая критичность</div>
-  </div>
-  <div class="tip-kpi tip-kpi--high">
-    <div class="tip-kpi__label">High</div>
-    <div class="tip-kpi__value">{{ kpis.high|default:0 }}</div>
-    <div class="tip-kpi__hint">высокая критичность</div>
-  </div>
-  <div class="tip-kpi tip-kpi--kev">
-    <div class="tip-kpi__label">KEV</div>
-    <div class="tip-kpi__value">{{ kpis.kev|default:0 }}</div>
-    <div class="tip-kpi__hint">Known Exploited</div>
-  </div>
-  <div class="tip-kpi tip-kpi--local">
-    <div class="tip-kpi__label">Local</div>
-    <div class="tip-kpi__value">{{ kpis.local|default:0 }}</div>
-    <div class="tip-kpi__hint">локальные ID</div>
+  <div class="page-actions">
+    <a class="btn btn-primary" href="{% url 'vulns:list' %}">Открыть каталог</a>
   </div>
 </div>
 
-<div class="tip-grid-2">
-  <section class="tip-panel">
-    <div class="tip-panel__head">
-      <h2 class="tip-panel__title">Требуют внимания</h2>
-      <a class="tip-btn tip-btn--sm tip-btn--ghost" href="{% url 'vulns:list' %}?severity=CRITICAL&severity=HIGH&is_kev=on">Все</a>
-    </div>
-    <div class="tip-panel__body tip-panel__body--flush">
-      <div class="tip-table-wrap">
-        <table class="tip-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Критичность</th>
-              <th>Флаги</th>
-              <th>Опубликовано</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for v in attention %}
-              <tr>
-                <td class="tip-mono"><a href="{% url 'vulns:detail' v.pk %}">{{ v.vuln_id }}</a></td>
-                <td><span class="tip-badge tip-badge--{{ v.severity|lower }}">{{ v.severity }}</span></td>
-                <td>
-                  {% if v.is_kev %}<span class="tip-badge tip-badge--kev">KEV</span>{% endif %}
-                  {% if v.source == 'BDU' or v.description_bdu %}<span class="tip-badge tip-badge--bdu">BDU</span>{% endif %}
-                  {% if v.source == 'LOCAL' %}<span class="tip-badge tip-badge--local">LOCAL</span>{% endif %}
-                </td>
-                <td>{{ v.published_at|date:"d.m.Y"|default:"—" }}</td>
-              </tr>
-            {% empty %}
-              <tr><td colspan="4" class="tip-empty">Нет записей, требующих внимания</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+<div class="grid-4" style="margin-bottom:12px">
+  <div class="panel kpi kpi-crit">
+    <div class="label">Critical</div>
+    <div class="value">{{ kpis.critical|default:0 }}</div>
+  </div>
+  <div class="panel kpi kpi-high">
+    <div class="label">High</div>
+    <div class="value">{{ kpis.high|default:0 }}</div>
+  </div>
+  <div class="panel kpi kpi-accent">
+    <div class="label">В CISA KEV</div>
+    <div class="value">{{ kpis.kev|default:0 }}</div>
+  </div>
+  <div class="panel kpi kpi-ok">
+    <div class="label">Локальные{% if brand.prefix %} {{ brand.prefix }}-*{% endif %}</div>
+    <div class="value">{{ kpis.local|default:0 }}</div>
+  </div>
+</div>
 
-  <section class="tip-panel">
-    <div class="tip-panel__head">
-      <h2 class="tip-panel__title">Открытые заявки</h2>
-      <a class="tip-btn tip-btn--sm tip-btn--ghost" href="{% url 'tickets:list' %}">Все</a>
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-h">
+      <h2>Требуют внимания</h2>
+      <a href="{% url 'vulns:list' %}?severity=CRITICAL&severity=HIGH&is_kev=on">Каталог</a>
     </div>
-    <div class="tip-panel__body tip-panel__body--flush">
-      <div class="tip-table-wrap">
-        <table class="tip-table">
-          <thead>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>ID</th><th>Severity</th><th>Метки</th></tr>
+        </thead>
+        <tbody>
+          {% for v in attention %}
             <tr>
-              <th>№</th>
-              <th>Статус</th>
-              <th>Приоритет</th>
-              <th>Обновлено</th>
+              <td class="mono"><a href="{% url 'vulns:detail' v.pk %}">{{ v.vuln_id }}</a></td>
+              <td>
+                {% if v.severity == 'CRITICAL' %}<span class="tag tag-crit">{{ v.severity }}</span>
+                {% elif v.severity == 'HIGH' %}<span class="tag tag-high">{{ v.severity }}</span>
+                {% elif v.severity == 'MEDIUM' %}<span class="tag tag-med">{{ v.severity }}</span>
+                {% else %}<span class="tag">{{ v.severity }}</span>{% endif %}
+              </td>
+              <td>
+                {% if v.is_kev %}<span class="tag tag-kev">KEV</span>{% endif %}
+                {% if v.source == 'BDU' or v.description_bdu %}<span class="tag tag-bdu">BDU</span>{% endif %}
+                {% if v.source == 'LOCAL' %}<span class="tag tag-int">LOCAL</span>{% endif %}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {% for t in tickets %}
-              <tr>
-                <td class="tip-mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
-                <td><span class="tip-badge tip-badge--muted">{{ t.get_status_display }}</span></td>
-                <td>{{ t.get_priority_display }}</td>
-                <td>{{ t.updated_at|date:"d.m.Y H:i"|default:"—" }}</td>
-              </tr>
-            {% empty %}
-              <tr><td colspan="4" class="tip-empty">Нет открытых заявок</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+          {% empty %}
+            <tr><td colspan="3" class="muted">Нет записей</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  </section>
+  </div>
+
+  <div class="panel">
+    <div class="panel-h">
+      <h2>Заявки</h2>
+      <a href="{% url 'tickets:list' %}">Все</a>
+    </div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>№</th><th>Статус</th><th>Обновлено</th></tr>
+        </thead>
+        <tbody>
+          {% for t in tickets %}
+            <tr>
+              <td class="mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
+              <td><span class="tag tag-status">{{ t.status }}</span></td>
+              <td class="muted">{{ t.updated_at|date:"d.m.Y H:i"|default:"—" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" class="muted">Нет открытых заявок</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock %}

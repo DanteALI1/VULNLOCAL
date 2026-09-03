@@ -8,54 +8,70 @@
   <link rel="stylesheet" href="{% static 'css/tip-console.css' %}">
 </head>
 <body>
-<div class="tip-login">
-  <section class="tip-login__brand" aria-label="Брендинг">
-    <div class="tip-cyber" aria-hidden="true">
-      <div class="tip-cyber__grid"></div>
-      <div class="tip-cyber__hex"></div>
-      <div class="tip-cyber__nodes"></div>
-      <div class="tip-cyber__scan"></div>
-    </div>
-    <div class="tip-login__brand-content">
-      {% if brand.logo %}
-        <img class="tip-login__logo" src="{{ brand.logo.url }}" alt="{{ brand.org|default:'NovaTIP' }}">
-      {% else %}
-        <div class="tip-login__mark" aria-hidden="true">NT</div>
-      {% endif %}
-      <h1 class="tip-login__title">{{ brand.login_title|default:"NovaTIP" }}</h1>
-      <p class="tip-login__subtitle">{{ brand.login_subtitle|default:"Threat Intelligence Platform" }}</p>
-    </div>
-  </section>
+  <div class="auth-page">
+    <aside class="auth-visual">
+      <div class="cyber-stage" aria-hidden="true">
+        <div class="cyber-grid"></div>
+        <div class="cyber-ring"></div>
+        <div class="cyber-hex h1"></div>
+        <div class="cyber-hex h2"></div>
+        <div class="cyber-hex h3"></div>
+        <div class="cyber-nodes">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="cyber-scan"></div>
+      </div>
 
-  <section class="tip-login__panel">
-    <div class="tip-login__card">
-      <h1>Вход в систему</h1>
-      <p class="tip-muted">Используйте учётную запись, выданную администратором. Самостоятельная регистрация отключена.</p>
+      <div class="brand" style="border:0;padding:0;height:auto">
+        {% if brand.logo %}
+          <img class="brand-mark" src="{{ brand.logo.url }}" alt="" style="width:48px;height:48px;object-fit:cover">
+        {% else %}
+          <div class="brand-mark" style="width:48px;height:48px;font-size:16px" aria-hidden="true">NT</div>
+        {% endif %}
+        <div class="brand-text">
+          <strong>NovaTIP</strong>
+          <span>{{ brand.org|default:"Организация" }} · Threat Intelligence</span>
+        </div>
+      </div>
 
-      {% include "partials/messages.html" %}
+      <h1>{{ brand.login_title|default:"Управление уязвимостями и угрозами в одном контуре" }}</h1>
+      <p>{{ brand.login_subtitle|default:"Каталог NVD / KEV / БДУ, локальные уязвимости с вашим префиксом ID, заявки на устранение и контроль лицензии." }}</p>
+      <div class="features">
+        <div class="feat"><i></i><span>Единая карточка: CVE + KEV + BDU + локальный ID</span></div>
+        <div class="feat"><i></i><span>Заявки с ролями, SLA и подтверждением закрытия</span></div>
+        <div class="feat"><i></i><span>Без саморегистрации — только учётки администратора</span></div>
+      </div>
+    </aside>
 
-      {% if form.non_field_errors %}
-        <div class="tip-login__error">{{ form.non_field_errors|striptags }}</div>
-      {% endif %}
-
-      <form method="post" action="{% url 'accounts:login' %}" novalidate>
+    <main class="auth-panel">
+      <form class="auth-card" method="post" action="{% url 'accounts:login' %}" novalidate>
         {% csrf_token %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <h2>Вход в систему</h2>
+        <p class="lead">Учётные записи создаёт администратор. Саморегистрация отключена.</p>
 
-        <div class="tip-field">
-          <label class="tip-label" for="id_username">Логин</label>
-          {{ form.username }}
-          {% if form.username.errors %}<div class="tip-login__error">{{ form.username.errors|striptags }}</div>{% endif %}
+        {% include "partials/messages.html" %}
+
+        {% if form.non_field_errors %}
+          <div class="alert warn" style="margin-bottom:12px">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+
+        <div class="stack-form">
+          <div class="field">
+            <label for="id_username">Логин</label>
+            {{ form.username }}
+            {% if form.username.errors %}<span class="hint" style="color:var(--danger)">{{ form.username.errors|striptags }}</span>{% endif %}
+          </div>
+          <div class="field">
+            <label for="id_password">Пароль</label>
+            {{ form.password }}
+            {% if form.password.errors %}<span class="hint" style="color:var(--danger)">{{ form.password.errors|striptags }}</span>{% endif %}
+          </div>
+          <button class="btn btn-primary" type="submit">Войти</button>
         </div>
-        <div class="tip-field">
-          <label class="tip-label" for="id_password">Пароль</label>
-          {{ form.password }}
-          {% if form.password.errors %}<div class="tip-login__error">{{ form.password.errors|striptags }}</div>{% endif %}
-        </div>
-        <button type="submit" class="tip-btn tip-btn--primary tip-btn--block">Войти</button>
+        <div class="auth-meta">NovaTIP · Threat Intelligence Platform</div>
       </form>
-    </div>
-  </section>
-</div>
+    </main>
+  </div>
 </body>
 </html>
