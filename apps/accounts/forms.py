@@ -5,13 +5,9 @@ from django.contrib.auth.forms import AuthenticationForm
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         label="Логин",
-        widget=forms.TextInput(
-            attrs={"class": "input", "autocomplete": "username", "autofocus": True}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "autocomplete": "username", "autofocus": True}),
     )
     password = forms.CharField(
         label="Пароль",
-        widget=forms.PasswordInput(
-            attrs={"class": "input", "autocomplete": "current-password"}
-        ),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "autocomplete": "current-password"}),
     )

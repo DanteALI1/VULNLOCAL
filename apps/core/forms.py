@@ -1,32 +1,10 @@
 from django import forms
 
-def _style_fields(form):
-    for name, field in form.fields.items():
-        w = field.widget
-        if isinstance(w, forms.CheckboxInput):
-            w.attrs.setdefault("class", "checkbox")
-        elif isinstance(w, forms.Select):
-            w.attrs.setdefault("class", "select")
-        elif isinstance(w, forms.Textarea):
-            w.attrs.setdefault("class", "textarea")
-        elif isinstance(w, forms.FileInput):
-            w.attrs.setdefault("class", "input")
-        elif isinstance(w, forms.HiddenInput):
-            continue
-        else:
-            w.attrs.setdefault("class", "input")
-
-
-
 from .db_wizard import validate_local_prefix
 from .models import SystemSettings
 
 
 class LicenseStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     license_file = forms.FileField(label="Файл лицензии (.novalic)", required=False)
     license_server_url = forms.URLField(label="URL License Server", required=False)
     skip_for_dev = forms.BooleanField(
@@ -37,12 +15,8 @@ class LicenseStepForm(forms.Form):
 
 
 class OrgStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     organization_name = forms.CharField(label="Организация", max_length=255)
-    local_id_prefix = forms.CharField(label="Префикс локальных ID", max_length=16, widget=forms.TextInput(attrs={"id": "org-prefix", "class": "input"}))
+    local_id_prefix = forms.CharField(label="Префикс локальных ID", max_length=16)
 
     def clean_local_id_prefix(self):
         ok, val = validate_local_prefix(self.cleaned_data["local_id_prefix"])
@@ -52,10 +26,6 @@ class OrgStepForm(forms.Form):
 
 
 class BrandingStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     login_title = forms.CharField(label="Заголовок login", max_length=255, initial="NovaTIP")
     login_subtitle = forms.CharField(
         label="Текст login",
@@ -67,10 +37,6 @@ class BrandingStepForm(forms.Form):
 
 
 class DbConnectForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     host = forms.CharField(initial="127.0.0.1", label="Host")
     port = forms.IntegerField(initial=5432, label="Port")
     name = forms.CharField(label="Имя базы", initial="novatip")
@@ -86,10 +52,6 @@ class DbConnectForm(forms.Form):
 
 
 class DbCreateForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     host = forms.CharField(initial="127.0.0.1")
     port = forms.IntegerField(initial=5432)
     superuser = forms.CharField(label="Superuser PostgreSQL", initial="postgres")
@@ -104,10 +66,6 @@ class DbCreateForm(forms.Form):
 
 
 class AdminStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     username = forms.CharField(label="Логин администратора")
     full_name = forms.CharField(label="ФИО", required=False)
     email = forms.EmailField(label="Email")
@@ -122,10 +80,6 @@ class AdminStepForm(forms.Form):
 
 
 class SourcesStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     nvd_api_key = forms.CharField(label="NVD API Key", required=False)
     kev_enabled = forms.BooleanField(
         label="Синхронизировать KEV (CISA)", required=False, initial=True
@@ -136,10 +90,6 @@ class SourcesStepForm(forms.Form):
 
 
 class MailStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     email_host = forms.CharField(required=False, label="SMTP host")
     email_port = forms.IntegerField(required=False, initial=587)
     email_user = forms.CharField(required=False)
@@ -150,20 +100,12 @@ class MailStepForm(forms.Form):
 
 
 class TelegramStepForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     telegram_bot_token = forms.CharField(required=False)
     telegram_chat_id = forms.CharField(required=False)
     skip = forms.BooleanField(label="Пропустить", required=False, initial=False)
 
 
 class SettingsForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        _style_fields(self)
-
     class Meta:
         model = SystemSettings
         fields = [
