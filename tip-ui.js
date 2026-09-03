@@ -45,9 +45,7 @@
         qsa(".tab", bar).forEach(function (t) { t.classList.toggle("is-active", t === tab); });
         var root = bar.parentElement;
         qsa("[data-pane]", root).forEach(function (pane) {
-          var on = pane.getAttribute("data-pane") === name;
-          pane.classList.toggle("is-active", on);
-          if (on) pane.removeAttribute("hidden"); else pane.setAttribute("hidden", "hidden");
+          pane.classList.toggle("is-active", pane.getAttribute("data-pane") === name);
         });
       });
     });

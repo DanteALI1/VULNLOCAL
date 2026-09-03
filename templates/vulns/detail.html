@@ -1,110 +1,191 @@
 {% extends "base.html" %}
 {% block title %}{{ vuln.vuln_id }} · NovaTIP{% endblock %}
-{% block crumb %}<a href="{% url 'vulns:list' %}">Уязвимости</a><span>/</span><strong>{{ vuln.vuln_id }}</strong>{% endblock %}
+{% block crumb %}Уязвимости / {{ vuln.vuln_id }}{% endblock %}
 
 {% block content %}
-<div class="page-head">
+<div class="tip-vuln-head">
   <div>
-    <h1 class="mono">{{ vuln.vuln_id }}</h1>
-    <p>
-      {% if vuln.severity == 'CRITICAL' %}<span class="tag tag-crit">{{ vuln.severity }}</span>
-      {% elif vuln.severity == 'HIGH' %}<span class="tag tag-high">{{ vuln.severity }}</span>
-      {% elif vuln.severity == 'MEDIUM' %}<span class="tag tag-med">{{ vuln.severity }}</span>
-      {% else %}<span class="tag">{{ vuln.severity }}</span>{% endif %}
-      {% if vuln.is_kev %}<span class="tag tag-kev">KEV</span>{% endif %}
-      {% if vuln.source == 'BDU' or vuln.description_bdu %}<span class="tag tag-bdu">BDU</span>{% endif %}
-      {% if vuln.source == 'LOCAL' %}<span class="tag tag-int">LOCAL</span>{% endif %}
-      {% if vuln.published_at %}<span class="muted"> · {{ vuln.published_at|date:"d.m.Y" }}</span>{% endif %}
-    </p>
-    {% if vuln.title %}<p style="margin-top:6px;font-weight:650">{{ vuln.title }}</p>{% endif %}
+    <h1 class="tip-vuln-id">{{ vuln.vuln_id }}</h1>
+    <div class="tip-vuln-meta">
+      <span class="tip-badge tip-badge--{{ vuln.severity|lower }}">{{ vuln.severity }}</span>
+      {% if vuln.is_kev %}<span class="tip-badge tip-badge--kev">KEV</span>{% endif %}
+      {% if vuln.source == 'BDU' or vuln.description_bdu %}<span class="tip-badge tip-badge--bdu">BDU</span>{% endif %}
+      {% if vuln.source == 'LOCAL' %}<span class="tip-badge tip-badge--local">LOCAL</span>{% endif %}
+      {% if vuln.published_at %}<span class="tip-muted">Опубликовано {{ vuln.published_at|date:"d.m.Y" }}</span>{% endif %}
+    </div>
+    {% if vuln.title %}<p style="margin:8px 0 0;font-weight:600">{{ vuln.title }}</p>{% endif %}
   </div>
-  <div class="page-actions">
-    <a class="btn btn-primary" href="{% url 'tickets:create' %}?vuln={{ vuln.pk }}">Создать заявку</a>
-    <a class="btn" href="{% url 'vulns:list' %}">К списку</a>
+  <div class="tip-page-actions">
+    <a class="tip-btn tip-btn--primary" href="{% url 'tickets:create' %}?vuln={{ vuln.pk }}">Создать заявку</a>
+    <a class="tip-btn" href="{% url 'vulns:list' %}">К списку</a>
   </div>
 </div>
 
-<div class="panel" style="margin-bottom:12px">
-  <div class="panel-h">
-    <h2>Описание</h2>
-    <div class="tabs" data-local-tabs>
-      <button type="button" class="tab {% if desc_default != 'bdu' %}is-active{% endif %}" data-tab="nvd">NVD</button>
-      <button type="button" class="tab {% if desc_default == 'bdu' %}is-active{% endif %}" data-tab="bdu">BDU</button>
+<section class="tip-panel">
+  <div class="tip-panel__head">
+    <h2 class="tip-panel__title">Описание</h2>
+    <div class="tip-seg" data-tip-seg="desc" role="group" aria-label="Источник описания">
+      <button type="button" class="tip-seg__btn {% if desc_default != 'bdu' %}is-active{% endif %}" data-tip-seg-btn="nvd">NVD</button>
+      <button type="button" class="tip-seg__btn {% if desc_default == 'bdu' %}is-active{% endif %}" data-tip-seg-btn="bdu">BDU</button>
     </div>
   </div>
-  <div class="panel-b">
-    <div data-pane="nvd" class="{% if desc_default != 'bdu' %}is-active{% endif %}">
-      <p>{{ vuln.description_nvd|default:"Описание NVD отсутствует."|linebreaksbr }}</p>
+  <div class="tip-panel__body">
+    <div class="tip-desc-pane tip-prose {% if desc_default != 'bdu' %}is-active{% endif %}" data-tip-seg-pane="desc" data-tip-seg-value="nvd">
+      {{ vuln.description_nvd|default:"Описание NVD отсутствует." }}
     </div>
-    <div data-pane="bdu" class="{% if desc_default == 'bdu' %}is-active{% endif %}" {% if desc_default != 'bdu' %}hidden{% endif %}>
-      <p>{{ vuln.description_bdu|default:"Описание БДУ отсутствует."|linebreaksbr }}</p>
+    <div class="tip-desc-pane tip-prose {% if desc_default == 'bdu' %}is-active{% endif %}" data-tip-seg-pane="desc" data-tip-seg-value="bdu">
+      {{ vuln.description_bdu|default:"Описание БДУ отсутствует." }}
     </div>
   </div>
-</div>
+</section>
 
-<div class="panel" style="margin-bottom:12px">
-  <div class="panel-h">
-    <h2>CVSS</h2>
-    <div class="tabs" data-local-tabs>
+<section class="tip-panel">
+  <div class="tip-panel__head">
+    <h2 class="tip-panel__title">Метрики CVSS</h2>
+    <div class="tip-seg" data-tip-seg="cvss" role="group" aria-label="Версия CVSS">
       {% for tab in cvss_tabs %}
-        <button type="button" class="tab {% if tab.key == active_cvss_key %}is-active{% endif %}" data-tab="{{ tab.key }}">{{ tab.label }}</button>
+        <button type="button"
+                class="tip-seg__btn {% if tab.key == active_cvss_key %}is-active{% endif %}"
+                data-tip-seg-btn="{{ tab.key }}">{{ tab.label }}</button>
       {% empty %}
-        <button type="button" class="tab is-active" data-tab="v31">3.1</button>
+        <button type="button" class="tip-seg__btn is-active" data-tip-seg-btn="v31">3.1</button>
+        <button type="button" class="tip-seg__btn" data-tip-seg-btn="v30">3.0</button>
+        <button type="button" class="tip-seg__btn" data-tip-seg-btn="v2">2.0</button>
+        <button type="button" class="tip-seg__btn" data-tip-seg-btn="v4">4.0</button>
       {% endfor %}
     </div>
   </div>
-  <div class="panel-b">
+  <div class="tip-panel__body">
     {% for tab in cvss_tabs %}
-      <div data-pane="{{ tab.key }}" class="{% if tab.key == active_cvss_key %}is-active{% endif %}" {% if tab.key != active_cvss_key %}hidden{% endif %}>
+      <div class="tip-cvss-pane {% if tab.key == active_cvss_key %}is-active{% endif %}"
+           data-tip-seg-pane="cvss" data-tip-seg-value="{{ tab.key }}">
         {% if tab.data %}
-          <div style="margin-bottom:10px">
-            <span class="tag tag-crit" style="font-size:16px">{{ tab.data.score|default:"—" }}</span>
-            <span class="mono muted">{{ tab.data.vector|default:"" }}</span>
+          <div class="tip-score" style="margin-bottom:10px">
+            <span class="tip-score__num">{{ tab.data.score|default:"—" }}</span>
+            {% if tab.data.severity %}
+              <span class="tip-badge tip-badge--{{ tab.data.severity|lower }}">{{ tab.data.severity }}</span>
+            {% endif %}
+            <span class="tip-mono tip-muted">{{ tab.data.vector|default:"" }}</span>
           </div>
           {% if tab.data.metrics %}
-            <div class="grid-2">
-              {% for k, val in tab.data.metrics.items %}
-                <div class="meta-item"><div class="k">{{ k }}</div><div class="v">{{ val }}</div></div>
+            <div class="tip-cvss-grid">
+              {% for k, v in tab.data.metrics.items %}
+                <div class="tip-cvss-metric">
+                  <div class="tip-cvss-metric__k">{{ k }}</div>
+                  <div class="tip-cvss-metric__v">{{ v }}</div>
+                </div>
               {% endfor %}
             </div>
           {% endif %}
         {% else %}
-          <p class="muted">Нет данных CVSS {{ tab.label }}</p>
+          <p class="tip-muted">Нет данных CVSS {{ tab.label }}</p>
         {% endif %}
       </div>
     {% empty %}
-      <p class="muted">Нет метрик CVSS</p>
+      <div class="tip-cvss-pane is-active" data-tip-seg-pane="cvss" data-tip-seg-value="v31">
+        <div class="tip-score">
+          <span class="tip-score__num">{{ vuln.cvss_v31.score|default:"—" }}</span>
+          <span class="tip-mono tip-muted">{{ vuln.cvss_v31.vector|default:"" }}</span>
+        </div>
+      </div>
     {% endfor %}
   </div>
+</section>
+
+<div class="tip-grid-2">
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">CWE</h2></div>
+    <div class="tip-panel__body">
+      {% if vuln.cwe %}
+        <ul class="tip-list-compact">
+          {% for cwe in vuln.cwe %}
+            <li class="tip-mono">{{ cwe }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="tip-muted">Нет данных CWE</p>
+      {% endif %}
+    </div>
+  </section>
+  <section class="tip-panel">
+    <div class="tip-panel__head"><h2 class="tip-panel__title">CPE</h2></div>
+    <div class="tip-panel__body">
+      {% if vuln.cpe %}
+        <ul class="tip-list-compact">
+          {% for cpe in vuln.cpe|slice:":20" %}
+            <li class="tip-mono">{{ cpe }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="tip-muted">Нет данных CPE</p>
+      {% endif %}
+    </div>
+  </section>
 </div>
 
-<div class="grid-2" style="margin-bottom:12px">
-  <div class="panel">
-    <div class="panel-h"><h2>CWE</h2></div>
-    <div class="panel-b">
-      {% if vuln.cwe %}
-        {% for c in vuln.cwe %}<span class="tag" style="margin:0 6px 6px 0">{{ c }}</span>{% endfor %}
-      {% else %}<p class="muted">Нет данных</p>{% endif %}
-    </div>
+<section class="tip-panel">
+  <div class="tip-panel__head"><h2 class="tip-panel__title">Ссылки (references)</h2></div>
+  <div class="tip-panel__body">
+    {% if vuln.references %}
+      <ul class="tip-list-compact">
+        {% for ref in vuln.references %}
+          <li>
+            {% if ref.url %}
+              <a href="{{ ref.url }}" target="_blank" rel="noopener">{{ ref.title|default:ref.url }}</a>
+            {% else %}
+              <a href="{{ ref }}" target="_blank" rel="noopener">{{ ref }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="tip-muted">Ссылки отсутствуют</p>
+    {% endif %}
   </div>
-  <div class="panel">
-    <div class="panel-h"><h2>Связанные заявки</h2></div>
-    <div class="table-wrap">
-      <table class="data">
-        <thead><tr><th>№</th><th>Статус</th><th>Приоритет</th></tr></thead>
+</section>
+
+<section class="tip-panel">
+  <div class="tip-panel__head"><h2 class="tip-panel__title">Связанные заявки</h2></div>
+  <div class="tip-panel__body tip-panel__body--flush">
+    <div class="tip-table-wrap">
+      <table class="tip-table">
+        <thead><tr><th>№</th><th>Статус</th><th>Приоритет</th><th>Обновлено</th></tr></thead>
         <tbody>
           {% for t in related_tickets %}
             <tr>
-              <td class="mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
-              <td><span class="tag tag-status">{{ t.status }}</span></td>
-              <td>{{ t.priority }}</td>
+              <td class="tip-mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
+              <td>{{ t.get_status_display }}</td>
+              <td>{{ t.get_priority_display }}</td>
+              <td>{{ t.updated_at|date:"d.m.Y H:i" }}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="3" class="muted">Нет заявок</td></tr>
+            <tr><td colspan="4" class="tip-empty">Связанных заявок нет</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
-</div>
+</section>
+
+<section class="tip-panel">
+  <div class="tip-panel__head"><h2 class="tip-panel__title">История</h2></div>
+  <div class="tip-panel__body">
+    <ul class="tip-timeline">
+      <li>
+        <div class="tip-timeline__when">{{ vuln.created_at|date:"d.m.Y H:i" }}</div>
+        <div class="tip-timeline__what">Создана · источник {{ vuln.source }}</div>
+      </li>
+      {% if vuln.modified_at %}
+        <li>
+          <div class="tip-timeline__when">{{ vuln.modified_at|date:"d.m.Y H:i" }}</div>
+          <div class="tip-timeline__what">Последнее изменение источника</div>
+        </li>
+      {% endif %}
+      <li>
+        <div class="tip-timeline__when">{{ vuln.updated_at|date:"d.m.Y H:i" }}</div>
+        <div class="tip-timeline__what">Обновление записи в NovaTIP</div>
+      </li>
+    </ul>
+  </div>
+</section>
 {% endblock %}

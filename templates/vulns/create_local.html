@@ -1,35 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Локальная уязвимость · NovaTIP{% endblock %}
-{% block crumb %}<a href="{% url 'vulns:list' %}">Уязвимости</a><span>/</span><strong>Создать локальную</strong>{% endblock %}
+{% block title %}Новая локальная уязвимость · NovaTIP{% endblock %}
+{% block crumb %}Уязвимости / Создать локальную{% endblock %}
 
 {% block content %}
-<div class="page-head">
+<div class="tip-page-head">
   <div>
     <h1>Локальная уязвимость</h1>
     <p>Будет создан ID вида {% if brand.prefix %}{{ brand.prefix }}{% else %}PREFIX{% endif %}-YYYY-NNNN</p>
   </div>
 </div>
 
-<div class="panel" style="max-width:720px">
-  <div class="panel-b">
-    <form method="post" novalidate class="stack">
+<div class="tip-panel" style="max-width:720px">
+  <div class="tip-panel__body">
+    <form method="post" novalidate>
       {% csrf_token %}
-      {% for field in form %}
-        <div class="field">
-          {% if field.field.widget.input_type == 'checkbox' %}
-            <label class="check-list"><span>{{ field }} {{ field.label }}</span></label>
-          {% else %}
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-          {% endif %}
-          {% if field.help_text %}<span class="hint">{{ field.help_text }}</span>{% endif %}
-          {% if field.errors %}<div class="alert warn">{{ field.errors|striptags }}</div>{% endif %}
-        </div>
-      {% endfor %}
-      {% if form.non_field_errors %}<div class="alert warn">{{ form.non_field_errors|striptags }}</div>{% endif %}
-      <div class="page-actions">
-        <button type="submit" class="btn btn-primary">Создать</button>
-        <a class="btn" href="{% url 'vulns:list' %}">Отмена</a>
+      {% if form %}
+        {% for field in form %}
+          <div class="tip-field">
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <label class="tip-check">{{ field }} {{ field.label }}</label>
+            {% else %}
+              <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+          <div class="tip-alert tip-alert--error">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+      {% endif %}
+      <div class="tip-page-actions">
+        <button type="submit" class="tip-btn tip-btn--primary">Создать</button>
+        <a class="tip-btn tip-btn--ghost" href="{% url 'vulns:list' %}">Отмена</a>
       </div>
     </form>
   </div>
