@@ -1,96 +1,74 @@
 {% extends "base.html" %}
 {% block title %}Лицензия · NovaTIP{% endblock %}
-{% block crumb %}Лицензия{% endblock %}
+{% block crumb %}<a href="{% url 'core:settings' %}">Настройки</a><span>/</span><strong>Лицензия</strong>{% endblock %}
 
 {% block content %}
-<div class="tip-page-head">
+<div class="page-head">
   <div>
     <h1>Статус лицензии</h1>
-    <p>Файл `.novalic`, online heartbeat и offline grace (14 дней)</p>
+    <p>Файл .novalic, online heartbeat и offline grace</p>
   </div>
 </div>
 
-<div class="tip-grid-2">
-  <section class="tip-panel">
-    <div class="tip-panel__head"><h2 class="tip-panel__title">Текущий статус</h2></div>
-    <div class="tip-panel__body">
-      <div class="tip-field">
-        <div class="tip-label">Состояние</div>
-        {% with st=status_info.status|default:state.status %}
-          {% if st == 'ok' or st == 'valid' or st == 'active' %}
-            <span class="tip-badge tip-badge--ok">Активна</span>
-          {% elif st == 'grace' %}
-            <span class="tip-badge tip-badge--warn">Grace-период</span>
-          {% else %}
-            <span class="tip-badge tip-badge--danger">{{ st|default:"нет данных" }}</span>
-          {% endif %}
-        {% endwith %}
-      </div>
-      <div class="tip-field">
-        <div class="tip-label">Организация</div>
-        <div>{{ state.payload.org|default:"—" }}</div>
-      </div>
-      <div class="tip-field">
-        <div class="tip-label">Срок</div>
-        <div>
-          {% if state.expires_at %}{{ state.expires_at|date:"d.m.Y H:i" }}
-          {% elif status_info.expires_at %}{{ status_info.expires_at }}
-          {% else %}—{% endif %}
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-h"><h2>Текущий статус</h2></div>
+    <div class="panel-b stack">
+      <div class="meta-item">
+        <div class="k">Состояние</div>
+        <div class="v">
+          {% with st=status_info.status|default:state.status %}
+            {% if st == 'ok' or st == 'valid' or st == 'active' %}
+              <span class="tag tag-ok">Активна</span>
+            {% elif st == 'grace' %}
+              <span class="tag tag-high">Grace</span>
+            {% else %}
+              <span class="tag tag-crit">{{ st|default:"нет данных" }}</span>
+            {% endif %}
+          {% endwith %}
         </div>
       </div>
-      <div class="tip-field">
-        <div class="tip-label">Fingerprint узла</div>
-        <div class="tip-mono">{% firstof fingerprint state.fingerprint "—" %}</div>
-      </div>
-      <div class="tip-field">
-        <div class="tip-label">License Server</div>
-        <div class="tip-mono">{{ state.server_url|default:"—" }}</div>
-      </div>
-      {% if state.last_check_at %}
-        <div class="tip-field">
-          <div class="tip-label">Последняя проверка</div>
-          <div>{{ state.last_check_at|date:"d.m.Y H:i" }}</div>
-        </div>
-      {% endif %}
-      <form method="post" style="margin-top:12px">
+      <div class="meta-item"><div class="k">Организация</div><div class="v">{{ state.payload.org|default:"—" }}</div></div>
+      <div class="meta-item"><div class="k">Срок</div><div class="v">{% if state.expires_at %}{{ state.expires_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</div></div>
+      <div class="meta-item"><div class="k">Fingerprint</div><div class="v mono">{% firstof fingerprint state.fingerprint "—" %}</div></div>
+      <form method="post" style="margin-top:8px">
         {% csrf_token %}
         <input type="hidden" name="action" value="recheck">
-        <button type="submit" class="tip-btn">Проверить сейчас</button>
+        <button type="submit" class="btn">Проверить сейчас</button>
       </form>
     </div>
-  </section>
+  </div>
 
-  <section class="tip-panel">
-    <div class="tip-panel__head"><h2 class="tip-panel__title">Загрузить лицензию</h2></div>
-    <div class="tip-panel__body">
-      <form method="post" enctype="multipart/form-data">
+  <div class="panel">
+    <div class="panel-h"><h2>Загрузить лицензию</h2></div>
+    <div class="panel-b stack">
+      <form method="post" enctype="multipart/form-data" class="stack">
         {% csrf_token %}
         <input type="hidden" name="action" value="upload">
         {% if form %}
           {% for field in form %}
-            <div class="tip-field">
-              <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <div class="field">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
               {{ field }}
-              {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
-              {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+              {% if field.errors %}<div class="alert warn">{{ field.errors|striptags }}</div>{% endif %}
             </div>
           {% endfor %}
         {% else %}
-          <div class="tip-field">
-            <label class="tip-label" for="id_license_file">Файл .novalic</label>
-            <input class="tip-input" type="file" id="id_license_file" name="license_file" accept=".novalic" required>
+          <div class="field">
+            <label for="id_license_file">Файл .novalic</label>
+            <input class="input" type="file" id="id_license_file" name="license_file" accept=".novalic" required>
           </div>
         {% endif %}
-        <button type="submit" class="tip-btn tip-btn--primary">Установить</button>
+        <button type="submit" class="btn btn-primary">Установить</button>
       </form>
       {% if user.is_platform_admin %}
-        <form method="post" style="margin-top:12px">
+        <form method="post">
           {% csrf_token %}
           <input type="hidden" name="action" value="dev_grace">
-          <button type="submit" class="tip-btn tip-btn--ghost" data-confirm="Включить dev grace на 14 дней?">Dev grace (14 дней)</button>
+          <button type="submit" class="btn">Dev grace (14 дней)</button>
         </form>
       {% endif %}
     </div>
-  </section>
+  </div>
 </div>
 {% endblock %}

@@ -1,87 +1,80 @@
 {% extends "base.html" %}
 {% block title %}Заявки · NovaTIP{% endblock %}
-{% block crumb %}Заявки{% endblock %}
+{% block crumb %}<a href="{% url 'core:dashboard' %}">Дашборд</a><span>/</span><strong>Заявки</strong>{% endblock %}
 
 {% block content %}
-<div class="tip-page-head">
+<div class="page-head">
   <div>
     <h1>Заявки на устранение</h1>
     <p>Жизненный цикл: new → triage → in_progress → waiting → resolved → closed</p>
   </div>
-  <div class="tip-page-actions">
+  <div class="page-actions">
     {% if can_create %}
-      <a class="tip-btn tip-btn--primary" href="{% url 'tickets:create' %}">Новая заявка</a>
+      <a class="btn btn-primary" href="{% url 'tickets:create' %}">Новая заявка</a>
     {% endif %}
   </div>
 </div>
 
-<div class="tip-filter" data-tip-filter>
-  <button type="button" class="tip-btn tip-filter__toggle" data-tip-filter-toggle aria-expanded="false">
-    <span data-tip-filter-label>Показать фильтры</span>
-    <span aria-hidden="true">▾</span>
-  </button>
-  <div class="tip-filter__panel">
-    <form method="get" class="tip-filter-form" data-tip-filter-form>
-      {% if form %}
-        <div class="tip-field-row">
+<div class="panel" style="margin-bottom:12px">
+  <div class="filter-panel">
+    <button class="filter-panel-toggle" type="button" data-collapse aria-expanded="true">
+      <span><strong style="font-size:13px">Фильтры</strong></span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="filter-panel-body">
+      <form method="get" class="filter-grid">
+        {% if form %}
           {% for field in form %}
-            <div class="tip-field">
-              <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <div class="field">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
               {{ field }}
             </div>
           {% endfor %}
+        {% endif %}
+        <div class="filter-actions" style="grid-column:1/-1">
+          <button class="btn btn-primary" type="submit">Применить</button>
+          <a class="btn" href="{% url 'tickets:list' %}">Сбросить</a>
         </div>
-      {% else %}
-        <div class="tip-field-row">
-          <div class="tip-field">
-            <label class="tip-label" for="t-q">Поиск</label>
-            <input class="tip-input" id="t-q" name="q" value="{{ request.GET.q|default:'' }}">
-          </div>
-        </div>
-      {% endif %}
-      <div class="tip-page-actions">
-        <button type="submit" class="tip-btn tip-btn--primary">Применить</button>
-        <a class="tip-btn tip-btn--ghost" href="{% url 'tickets:list' %}">Сбросить</a>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 
-<div class="tip-panel">
-  <div class="tip-panel__body tip-panel__body--flush">
-    <div class="tip-table-wrap">
-      <table class="tip-table">
-        <thead>
+<div class="panel">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Уязвимость</th>
+          <th>Заголовок</th>
+          <th>Статус</th>
+          <th>Приоритет</th>
+          <th>Исполнитель</th>
+          <th>Обновлено</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in page_obj %}
           <tr>
-            <th>№</th>
-            <th>Уязвимость</th>
-            <th>Статус</th>
-            <th>Приоритет</th>
-            <th>Исполнитель</th>
-            <th>Обновлено</th>
+            <td class="mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
+            <td class="mono">
+              {% if t.vulnerability %}
+                <a href="{% url 'vulns:detail' t.vulnerability_id %}">{{ t.vulnerability.vuln_id }}</a>
+              {% else %}—{% endif %}
+            </td>
+            <td>{{ t.title|truncatechars:60 }}</td>
+            <td><span class="tag tag-status">{{ t.status }}</span></td>
+            <td>{{ t.priority }}</td>
+            <td>{{ t.assignee|default:"—" }}</td>
+            <td class="muted">{{ t.updated_at|date:"d.m.Y H:i"|default:"—" }}</td>
           </tr>
-        </thead>
-        <tbody>
-          {% for t in page_obj %}
-            <tr>
-              <td class="tip-mono"><a href="{% url 'tickets:detail' t.pk %}">T-{{ t.number }}</a></td>
-              <td class="tip-mono">
-                {% if t.vulnerability %}
-                  <a href="{% url 'vulns:detail' t.vulnerability_id %}">{{ t.vulnerability.vuln_id }}</a>
-                {% else %}—{% endif %}
-              </td>
-              <td><span class="tip-badge tip-badge--muted">{{ t.get_status_display }}</span></td>
-              <td>{{ t.get_priority_display }}</td>
-              <td>{{ t.assignee|default:"—" }}</td>
-              <td>{{ t.updated_at|date:"d.m.Y H:i"|default:"—" }}</td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="6" class="tip-empty">Заявок нет</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% include "partials/pagination.html" %}
+        {% empty %}
+          <tr><td colspan="7" class="muted">Заявок нет</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
+  {% include "partials/pagination.html" %}
 </div>
 {% endblock %}

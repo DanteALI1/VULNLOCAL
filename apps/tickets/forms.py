@@ -1,4 +1,24 @@
 from django import forms
+
+def _style_fields(form):
+    from django import forms as djforms
+    for name, field in form.fields.items():
+        w = field.widget
+        if isinstance(w, djforms.CheckboxInput):
+            w.attrs.setdefault("class", "checkbox")
+        elif isinstance(w, djforms.Select):
+            w.attrs.setdefault("class", "select")
+        elif isinstance(w, djforms.SelectMultiple):
+            w.attrs.setdefault("class", "select")
+        elif isinstance(w, djforms.Textarea):
+            w.attrs.setdefault("class", "textarea")
+        elif isinstance(w, djforms.FileInput):
+            w.attrs.setdefault("class", "input")
+        elif isinstance(w, djforms.HiddenInput):
+            continue
+        else:
+            w.attrs.setdefault("class", "input")
+
 from django.contrib.auth import get_user_model
 
 from apps.accounts.models import User
@@ -10,6 +30,10 @@ UserModel = get_user_model()
 
 
 class TicketFilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _style_fields(self)
+
     q = forms.CharField(required=False, label="Поиск")
     status = forms.MultipleChoiceField(
         required=False,
@@ -46,6 +70,10 @@ class TicketCreateForm(forms.ModelForm):
 
 
 class TicketAssignForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _style_fields(self)
+
     assignee = forms.ModelChoiceField(
         queryset=UserModel.objects.filter(role=User.Role.TICKET_ASSIGNEE, is_active=True),
         label="Исполнитель",
@@ -53,6 +81,10 @@ class TicketAssignForm(forms.Form):
 
 
 class TicketTransitionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _style_fields(self)
+
     new_status = forms.ChoiceField(choices=Ticket.Status.choices)
     waiting_reason = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 3}))
     resolution_notes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 3}))

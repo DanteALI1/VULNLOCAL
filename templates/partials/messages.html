@@ -1,7 +1,7 @@
 {% if messages %}
-  <div class="tip-messages" role="status">
+  <div class="stack" style="margin-bottom:12px" role="status">
     {% for message in messages %}
-      <div class="tip-alert tip-alert--{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+      <div class="alert {% if 'error' in message.tags or 'danger' in message.tags %}warn{% elif 'success' in message.tags %}ok{% else %}info{% endif %}">
         {{ message }}
       </div>
     {% endfor %}

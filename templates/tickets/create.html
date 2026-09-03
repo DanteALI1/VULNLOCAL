@@ -1,33 +1,30 @@
 {% extends "base.html" %}
 {% block title %}Новая заявка · NovaTIP{% endblock %}
-{% block crumb %}Заявки / Создать{% endblock %}
+{% block crumb %}<a href="{% url 'tickets:list' %}">Заявки</a><span>/</span><strong>Создать</strong>{% endblock %}
 
 {% block content %}
-<div class="tip-page-head">
+<div class="page-head">
   <div>
     <h1>Новая заявка</h1>
     <p>Связь с уязвимостью и приоритет обязательны</p>
   </div>
 </div>
-
-<div class="tip-panel" style="max-width:720px">
-  <div class="tip-panel__body">
-    <form method="post" novalidate>
+<div class="panel" style="max-width:720px">
+  <div class="panel-b">
+    <form method="post" novalidate class="stack">
       {% csrf_token %}
       {% for field in form %}
-        <div class="tip-field">
-          <label class="tip-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <div class="field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
           {{ field }}
-          {% if field.help_text %}<div class="tip-help">{{ field.help_text }}</div>{% endif %}
-          {% if field.errors %}<div class="tip-alert tip-alert--error">{{ field.errors|striptags }}</div>{% endif %}
+          {% if field.help_text %}<span class="hint">{{ field.help_text }}</span>{% endif %}
+          {% if field.errors %}<div class="alert warn">{{ field.errors|striptags }}</div>{% endif %}
         </div>
       {% endfor %}
-      {% if form.non_field_errors %}
-        <div class="tip-alert tip-alert--error">{{ form.non_field_errors|striptags }}</div>
-      {% endif %}
-      <div class="tip-page-actions">
-        <button type="submit" class="tip-btn tip-btn--primary">Создать</button>
-        <a class="tip-btn tip-btn--ghost" href="{% url 'tickets:list' %}">Отмена</a>
+      {% if form.non_field_errors %}<div class="alert warn">{{ form.non_field_errors|striptags }}</div>{% endif %}
+      <div class="page-actions">
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a class="btn" href="{% url 'tickets:list' %}">Отмена</a>
       </div>
     </form>
   </div>
